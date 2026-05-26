@@ -11,7 +11,7 @@ export function Footer() {
             </Link>
 
             <p className="mt-2 text-sm leading-6 text-gray-600">
-              Free calculators, guides, and planning tools for Etsy sellers and
+              Free calculators, guides, and planning tools for and
               online marketplace sellers.
             </p>
           </div>
