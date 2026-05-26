@@ -8,21 +8,37 @@ export function Header() {
           SellerToolSuite
         </Link>
 
-        <nav className="flex items-center gap-5 text-sm font-medium text-gray-700">
+        <nav className="flex flex-wrap items-center justify-end gap-4 text-sm font-medium text-gray-700">
           <Link href="/" className="hover:text-gray-950">
             Home
           </Link>
 
-          <Link href="/etsy/profit-calculator" className="hover:text-gray-950">
-            Profit Calculator
+          <Link href="/etsy" className="hover:text-gray-950">
+  Etsy
+</Link>
+
+          <Link href="/ebay" className="hover:text-gray-950">
+            eBay
           </Link>
 
-          <Link href="/etsy/fee-calculator" className="hover:text-gray-950">
-            Fee Calculator
+          <Link href="/amazon" className="hover:text-gray-950">
+            Amazon
           </Link>
 
-          <Link href="/etsy/pricing-calculator" className="hover:text-gray-950">
-            Pricing Calculator
+          <Link href="/shopify" className="hover:text-gray-950">
+            Shopify
+          </Link>
+
+          <Link href="/mercari" className="hover:text-gray-950">
+            Mercari
+          </Link>
+
+          <Link href="/poshmark" className="hover:text-gray-950">
+            Poshmark
+          </Link>
+
+          <Link href="/facebook-marketplace" className="hover:text-gray-950">
+            Facebook Marketplace
           </Link>
         </nav>
       </div>

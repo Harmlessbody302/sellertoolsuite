@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="mt-16 border-t bg-white">
       <div className="mx-auto max-w-6xl px-6 py-8">
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-4">
           <div>
             <p className="text-lg font-bold text-gray-950">
               SellerToolSuite
@@ -17,12 +17,26 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="font-semibold text-gray-950">Etsy Tools</p>
+            <p className="font-semibold text-gray-950">Live Tools</p>
 
             <div className="mt-3 flex flex-col gap-2 text-sm text-gray-600">
-              <Link href="/etsy/profit-calculator">Profit Calculator</Link>
-              <Link href="/etsy/fee-calculator">Fee Calculator</Link>
-              <Link href="/etsy/pricing-calculator">Pricing Calculator</Link>
+              <Link href="/etsy/profit-calculator">Etsy Profit Calculator</Link>
+              <Link href="/etsy/fee-calculator">Etsy Fee Calculator</Link>
+              <Link href="/etsy/pricing-calculator">Etsy Pricing Calculator</Link>
+            </div>
+          </div>
+
+          <div>
+            <p className="font-semibold text-gray-950">Platforms</p>
+
+            <div className="mt-3 flex flex-col gap-2 text-sm text-gray-600">
+              <Link href="/etsy">Etsy</Link>
+              <Link href="/ebay">eBay</Link>
+              <Link href="/amazon">Amazon</Link>
+              <Link href="/shopify">Shopify</Link>
+              <Link href="/mercari">Mercari</Link>
+              <Link href="/poshmark">Poshmark</Link>
+              <Link href="/facebook-marketplace">Facebook Marketplace</Link>
             </div>
           </div>
 
@@ -38,9 +52,11 @@ export function Footer() {
         </div>
 
         <p className="mt-8 text-xs leading-5 text-gray-500">
-          SellerToolSuite is not affiliated with Etsy. Calculators are estimates
-          for planning purposes only. Actual fees, taxes, payment processing
-          fees, ad charges, refunds, and other costs may vary.
+          SellerToolSuite is not affiliated with Etsy, eBay, Amazon, Shopify,
+          Mercari, Poshmark, Facebook, Meta, or any marketplace listed.
+          Calculators are estimates for planning purposes only. Actual fees,
+          taxes, payment processing fees, ad charges, refunds, and other costs
+          may vary.
         </p>
       </div>
     </footer>
