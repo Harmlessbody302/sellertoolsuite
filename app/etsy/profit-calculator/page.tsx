@@ -169,7 +169,7 @@ export default function EtsyProfitCalculatorPage() {
             value={toMoney(result.totalFees)}
           />
 
-          <ResultCard label="Total costs" value={toMoney(result.totalCosts)} />
+         <ResultCard label="Total combined costs (including fees)" value={toMoney(result.totalCosts)} />
         </section>
       </div>
 

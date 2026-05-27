@@ -93,7 +93,7 @@ export default function EtsyBreakEvenCalculatorPage() {
           />
 
           <ResultCard
-            label="Revenue needed to break even"
+            label="Total revenue needed to break even"
             value={toMoney(result.revenueNeeded)}
           />
         </section>

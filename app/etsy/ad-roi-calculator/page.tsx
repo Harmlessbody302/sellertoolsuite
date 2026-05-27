@@ -86,7 +86,7 @@ export default function EtsyAdRoiCalculatorPage() {
             value={toMoney(result.profitAfterAds)}
           />
 
-          <ResultCard label="Ad ROI" value={toPercent(result.roi)} />
+          <ResultCard label="Profit ROI on ad spend" value={toPercent(result.roi)} />
 
           <ResultCard
             label="ROAS"

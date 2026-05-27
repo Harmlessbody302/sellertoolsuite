@@ -175,7 +175,7 @@ export default function EtsyFeeCalculatorPage() {
           />
 
           <ResultCard
-            label="Payout before product costs"
+            label="Revenue after Etsy/payment fees"
             value={toMoney(result.payoutBeforeCosts)}
           />
         </section>

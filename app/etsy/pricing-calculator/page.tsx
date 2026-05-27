@@ -245,12 +245,12 @@ export default function EtsyPricingCalculatorPage() {
           />
 
           <ResultCard
-            label="Estimated total costs"
+            label="Estimated total costs (incl. fees)"
             value={toMoney(result.totalCosts)}
           />
 
           <ResultCard
-            label="Gross revenue at recommended price"
+            label="Buyer payment at recommended price"
             value={toMoney(result.grossRevenue)}
           />
         </section>

@@ -82,7 +82,7 @@ export default function EtsySalesGoalCalculatorPage() {
           />
 
           <ResultCard
-            label="Estimated revenue needed"
+            label="Estimated monthly revenue needed"
             value={toMoney(result.revenueNeeded)}
           />
 

@@ -37,6 +37,48 @@ const etsyTools = [
   description:
     "Estimate whether Etsy ads are helping or hurting your profit after ad spend.",
 },
+{
+  title: "Discount Impact Calculator",
+  description:
+    "See how coupons and sales affect your profit, margin, and monthly earnings before running a discount.",
+  href: "/etsy/discount-impact-calculator",
+},
+{
+  title: "Etsy Conversion Rate Calculator",
+  description:
+    "Calculate your Etsy conversion rate and estimate the traffic needed to hit your order goals.",
+  href: "/etsy/conversion-rate-calculator",
+},
+{
+  title: "Etsy Listing ROI Calculator",
+  description:
+    "Estimate whether a listing is worth keeping, improving, advertising, or retiring based on traffic, orders, profit, and costs.",
+  href: "/etsy/listing-roi-calculator",
+},
+{
+  title: "Etsy Shipping Profit Calculator",
+  description:
+    "Estimate how shipping costs, packaging, and delivery pricing affect listing profitability.",
+  href: "/etsy/shipping-profit-calculator",
+},
+{
+  title: "Etsy Bundle Pricing Calculator",
+  description:
+    "Estimate whether a discounted Etsy bundle is still profitable after item costs, fees, shipping, and packaging.",
+  href: "/etsy/bundle-pricing-calculator",
+},
+{
+  title: "Etsy Inventory Restock Calculator",
+  description:
+    "Estimate when to restock, how many units to order, and how long your current Etsy inventory will last.",
+  href: "/etsy/inventory-restock-calculator",
+},
+{
+  title: "Etsy Refund Impact Calculator",
+  description:
+    "Estimate how refunds, replacements, and cancellations affect Etsy monthly profit.",
+  href: "/etsy/refund-impact-calculator",
+},
 ];
 
 export default function EtsyPage() {
