@@ -293,7 +293,15 @@ function Input({ label, value, onChange, prefix, suffix }: any) {
   );
 }
 
-function Card({ label, value, variant = "default" }: any) {
+function Card({
+  label,
+  value,
+  variant = "default",
+}: {
+  label: string;
+  value: string;
+  variant?: "default" | "good" | "warning" | "danger";
+}) {
   const styles = {
     default: "border-slate-300 bg-slate-50",
     good: "border-green-300 bg-green-50",

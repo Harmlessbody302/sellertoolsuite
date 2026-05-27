@@ -317,7 +317,15 @@ function Input({
   );
 }
 
-function ResultCard({ label, value, variant = "default" }: any) {
+function ResultCard({
+  label,
+  value,
+  variant = "default",
+}: {
+  label: string;
+  value: string;
+  variant?: "default" | "good" | "warning" | "danger" | "info";
+}) {
   const styles = {
     default: "border-slate-300 bg-slate-50",
     good: "border-green-300 bg-green-50",

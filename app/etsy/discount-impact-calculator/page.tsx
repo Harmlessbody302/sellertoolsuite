@@ -60,14 +60,14 @@ export default function DiscountImpactCalculator() {
         "This discount still makes profit, but it meaningfully reduces your margin.";
     }
 
-    const lossSeverity =
-      monthlyProfitLost <= 0
-        ? "good"
-        : monthlyProfitLost < monthlyProfitBefore * 0.15
-        ? "good"
-        : monthlyProfitLost < monthlyProfitBefore * 0.35
-        ? "warning"
-        : "danger";
+    const lossSeverity: "default" | "good" | "warning" | "danger" =
+  monthlyProfitLost <= 0
+    ? "good"
+    : monthlyProfitLost < monthlyProfitBefore * 0.15
+    ? "good"
+    : monthlyProfitLost < monthlyProfitBefore * 0.35
+    ? "warning"
+    : "danger";
 
     const comparisonDiscounts = [10, 15, 20, 25, 30].map((rate) => {
       const comparisonSalePrice = originalPrice - originalPrice * (rate / 100);

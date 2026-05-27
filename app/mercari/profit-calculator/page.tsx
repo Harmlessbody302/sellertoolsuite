@@ -247,11 +247,20 @@ function Input({ label, value, onChange, prefix, suffix }: any) {
   );
 }
 
-function ResultCard({ label, value, variant = "default" }: any) {
+function ResultCard({
+  label,
+  value,
+  variant = "default",
+}: {
+  label: string;
+  value: string;
+  variant?: "default" | "good" | "warning" | "danger" | "info";
+}) {
   const styles = {
     default: "border-slate-300 bg-slate-50",
     good: "border-green-300 bg-green-50",
     warning: "border-yellow-300 bg-yellow-50",
+    danger: "border-red-300 bg-red-50",
     info: "border-blue-300 bg-blue-50",
   };
 
