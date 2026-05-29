@@ -1,39 +1,104 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
+import { NumberInput } from "@/components/NumberInput";
+import { toMoney } from "@/lib/etsyCalculations";
 
-export default function AmazonBreakEvenCalculator() {
-  const [productCost, setProductCost] = useState("10");
-  const [referralFeeRate, setReferralFeeRate] = useState("15");
-  const [fbaFee, setFbaFee] = useState("5.25");
-  const [storageCost, setStorageCost] = useState("0.40");
-  const [inboundShipping, setInboundShipping] = useState("1.25");
-  const [prepCost, setPrepCost] = useState("0.75");
-  const [ppcCost, setPpcCost] = useState("3");
-  const [returnsAllowance, setReturnsAllowance] = useState("1");
-  const [targetProfit, setTargetProfit] = useState("8");
+function MetricCard({
+  label,
+  value,
+  helper,
+  tone = "neutral",
+}: {
+  label: string;
+  value: string;
+  helper?: string;
+  tone?: "neutral" | "good" | "warning" | "bad" | "blue";
+}) {
+  const tones = {
+    neutral: "border-gray-200 bg-gray-50",
+    good: "border-emerald-200 bg-emerald-50",
+    warning: "border-amber-200 bg-amber-50",
+    bad: "border-red-200 bg-red-50",
+    blue: "border-blue-200 bg-blue-50",
+  };
+
+  return (
+    <div className={`rounded-xl border p-4 ${tones[tone]}`}>
+      <p className="text-sm font-medium text-gray-600">{label}</p>
+      <p className="mt-2 text-2xl font-bold text-gray-950">{value}</p>
+      {helper ? (
+        <p className="mt-2 text-sm leading-5 text-gray-600">{helper}</p>
+      ) : null}
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const style =
+    status === "Strong"
+      ? "bg-green-100 text-green-700"
+      : status === "Healthy"
+        ? "bg-emerald-100 text-emerald-700"
+        : status === "Tight"
+          ? "bg-amber-100 text-amber-700"
+          : "bg-blue-100 text-blue-700";
+
+  return (
+    <span className={`rounded-full px-4 py-2 text-sm font-bold ${style}`}>
+      {status}
+    </span>
+  );
+}
+
+function SmallStatusBadge({ status }: { status: string }) {
+  const style =
+    status === "Strong"
+      ? "bg-green-100 text-green-700"
+      : status === "Healthy"
+        ? "bg-emerald-100 text-emerald-700"
+        : status === "Break-even"
+          ? "bg-blue-100 text-blue-700"
+          : status === "Risky"
+            ? "bg-red-100 text-red-700"
+            : "bg-amber-100 text-amber-700";
+
+  return (
+    <span className={`rounded-full px-3 py-1 text-xs font-bold ${style}`}>
+      {status}
+    </span>
+  );
+}
+
+export default function AmazonBreakEvenCalculatorPage() {
+  const [productCost, setProductCost] = useState(10);
+  const [referralFeeRate, setReferralFeeRate] = useState(15);
+  const [fbaFee, setFbaFee] = useState(5.25);
+  const [storageCost, setStorageCost] = useState(0.4);
+  const [inboundShipping, setInboundShipping] = useState(1.25);
+  const [prepCost, setPrepCost] = useState(0.75);
+  const [ppcCost, setPpcCost] = useState(3);
+  const [returnsAllowance, setReturnsAllowance] = useState(1);
+  const [targetProfit, setTargetProfit] = useState(8);
 
   const result = useMemo(() => {
-    const cost = Number(productCost) || 0;
-    const referralRate = Number(referralFeeRate) || 0;
-    const fulfillment = Number(fbaFee) || 0;
-    const storage = Number(storageCost) || 0;
-    const inbound = Number(inboundShipping) || 0;
-    const prep = Number(prepCost) || 0;
-    const ads = Number(ppcCost) || 0;
-    const returns = Number(returnsAllowance) || 0;
-    const target = Number(targetProfit) || 0;
-
-    const variableRate = referralRate / 100;
+    const variableRate = Math.min(0.95, Math.max(0, referralFeeRate / 100));
 
     const fixedCosts =
-      cost + fulfillment + storage + inbound + prep + ads + returns;
+      productCost +
+      fbaFee +
+      storageCost +
+      inboundShipping +
+      prepCost +
+      ppcCost +
+      returnsAllowance;
 
     const breakEvenPrice =
       variableRate < 1 ? fixedCosts / (1 - variableRate) : 0;
 
     const targetProfitPrice =
-      variableRate < 1 ? (fixedCosts + target) / (1 - variableRate) : 0;
+      variableRate < 1 ? (fixedCosts + targetProfit) / (1 - variableRate) : 0;
 
     const safeBufferPrice = targetProfitPrice * 1.15;
     const aggressiveFloorPrice = targetProfitPrice * 0.9;
@@ -66,13 +131,13 @@ export default function AmazonBreakEvenCalculator() {
       statusText =
         "The break-even price could not be calculated with the current fee assumptions.";
       recommendation =
-        "Check that referral fee rate is below 100% and that your cost assumptions are realistic.";
+        "Check that the referral fee rate is below 100% and that your cost assumptions are realistic.";
     } else if (breakEvenPrice > targetProfitPrice * 0.9) {
       status = "Tight";
       statusText =
         "Your break-even price is close to your target-profit price.";
       recommendation =
-        "There may not be much room for price competition, coupons, extra PPC, or higher return costs.";
+        "There may not be much room for price competition, coupons, extra PPC, returns, or higher fulfillment costs.";
     } else if (targetEval.margin >= 25) {
       status = "Strong";
       statusText =
@@ -80,6 +145,13 @@ export default function AmazonBreakEvenCalculator() {
       recommendation =
         "This product may have enough pricing room if demand and competition also look favorable.";
     }
+
+    const getScenarioStatus = (profit: number, margin: number) => {
+      if (profit <= 0.01) return "Break-even";
+      if (margin < 10) return "Risky";
+      if (margin >= 25) return "Strong";
+      return "Healthy";
+    };
 
     const scenarios = [
       {
@@ -92,24 +164,31 @@ export default function AmazonBreakEvenCalculator() {
         label: "Target profit",
         price: targetProfitPrice,
         ...targetEval,
-        status: targetEval.margin >= 25 ? "Strong" : "Healthy",
+        status: getScenarioStatus(targetEval.profit, targetEval.margin),
       },
       {
         label: "Aggressive",
         price: aggressiveFloorPrice,
         ...aggressiveEval,
-        status: aggressiveEval.profit > 0 ? "Healthy" : "Risky",
+        status: getScenarioStatus(aggressiveEval.profit, aggressiveEval.margin),
       },
       {
         label: "Safe buffer",
         price: safeBufferPrice,
         ...safeEval,
-        status: safeEval.margin >= 25 ? "Strong" : "Healthy",
+        status: getScenarioStatus(safeEval.profit, safeEval.margin),
       },
     ];
 
+    const amazonFeesAtTarget = targetEval.referralFee + fbaFee + storageCost;
+    const totalOperationalCosts =
+      productCost + inboundShipping + prepCost + ppcCost + returnsAllowance;
+
     return {
+      variableRate,
       fixedCosts,
+      totalOperationalCosts,
+      amazonFeesAtTarget,
       breakEvenPrice,
       targetProfitPrice,
       safeBufferPrice,
@@ -135,346 +214,435 @@ export default function AmazonBreakEvenCalculator() {
     targetProfit,
   ]);
 
-  const money = (value: number) =>
-    value.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-
   const percent = (value: number) => `${value.toFixed(1)}%`;
 
+  const targetTone =
+    result.targetEval.profit <= 0
+      ? "bad"
+      : result.targetEval.margin < 10
+        ? "warning"
+        : "good";
+
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
-      <div className="mx-auto max-w-5xl">
-        <section className="mb-8">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-blue-600">
-            Amazon Seller Tool
+    <main className="mx-auto max-w-6xl px-6 py-12">
+      <section className="max-w-3xl">
+        <p className="text-sm font-bold uppercase tracking-wide text-blue-700">
+          Amazon Seller Tools
+        </p>
+
+        <h1 className="mt-3 text-4xl font-bold tracking-tight text-gray-950">
+          Amazon Break-Even Calculator
+        </h1>
+
+        <p className="mt-4 text-lg leading-8 text-gray-600">
+          Estimate the minimum Amazon sale price needed to avoid losing money
+          after referral fees, FBA costs, PPC, storage, returns, inbound
+          shipping, and prep costs.
+        </p>
+      </section>
+
+      <div className="mt-10 grid items-start gap-8 lg:grid-cols-[0.9fr_1.4fr]">
+        <section className="rounded-2xl border border-gray-400 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Break-even inputs
+          </h2>
+
+          <p className="mt-3 text-sm leading-6 text-gray-600">
+            Enter product cost, Amazon fees, fulfillment costs, PPC allowance,
+            returns allowance, and target profit to estimate viable pricing.
           </p>
 
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Amazon Break-Even Calculator
-          </h1>
-
-          <p className="mt-3 max-w-2xl text-slate-600">
-            Estimate the minimum Amazon sale price needed to avoid losing money
-            after referral fees, FBA costs, PPC, storage, returns, and prep
-            costs.
-          </p>
-        </section>
-
-        <div className="grid items-start gap-6 lg:grid-cols-[0.95fr_1.25fr]">
-          <section className="rounded-2xl border bg-white p-5 shadow-sm">
-            <h2 className="mb-4 text-xl font-semibold">Break-even details</h2>
-
-            <div className="space-y-4">
-              <Input
-                label="Product cost"
-                value={productCost}
-                onChange={setProductCost}
-                prefix="$"
-              />
-
-              <Input
-                label="Referral fee rate"
-                value={referralFeeRate}
-                onChange={setReferralFeeRate}
-                suffix="%"
-              />
-
-              <Input
-                label="FBA fulfillment fee"
-                value={fbaFee}
-                onChange={setFbaFee}
-                prefix="$"
-              />
-
-              <Input
-                label="Storage cost"
-                value={storageCost}
-                onChange={setStorageCost}
-                prefix="$"
-              />
-
-              <Input
-                label="Inbound shipping"
-                value={inboundShipping}
-                onChange={setInboundShipping}
-                prefix="$"
-              />
-
-              <Input
-                label="Prep / packaging cost"
-                value={prepCost}
-                onChange={setPrepCost}
-                prefix="$"
-              />
-
-              <Input
-                label="PPC cost per sale"
-                value={ppcCost}
-                onChange={setPpcCost}
-                prefix="$"
-              />
-
-              <Input
-                label="Returns allowance"
-                value={returnsAllowance}
-                onChange={setReturnsAllowance}
-                prefix="$"
-              />
-
-              <Input
-                label="Target profit"
-                value={targetProfit}
-                onChange={setTargetProfit}
-                prefix="$"
-              />
-            </div>
-          </section>
-
-          <section className="rounded-2xl border bg-white p-5 shadow-sm">
-            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-xl font-semibold">Results</h2>
-                <p className="text-sm text-slate-500">
-                  Minimum viable Amazon pricing thresholds.
-                </p>
-              </div>
-
-              <StatusBadge status={result.status} />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <ResultCard
-                label="Break-even price"
-                value={money(result.breakEvenPrice)}
-                variant="warning"
-              />
-
-              <ResultCard
-                label="Target profit price"
-                value={money(result.targetProfitPrice)}
-                variant="good"
-              />
-
-              <ResultCard
-                label="Safe buffer price"
-                value={money(result.safeBufferPrice)}
-                variant="info"
-              />
-
-              <ResultCard
-                label="Aggressive floor"
-                value={money(result.aggressiveFloorPrice)}
-                variant="danger"
-              />
-
-              <ResultCard
-                label="Target margin"
-                value={percent(result.targetEval.margin)}
-                variant={
-                  result.targetEval.margin >= 25
-                    ? "good"
-                    : result.targetEval.margin >= 10
-                    ? "warning"
-                    : "danger"
-                }
-              />
-
-              <ResultCard
-                label="Total fixed costs"
-                value={money(result.fixedCosts)}
-              />
-            </div>
-
-            <div className="mt-6 rounded-2xl bg-slate-100 p-5">
-              <h3 className="font-semibold">What this means</h3>
-
-              <p className="mt-2 text-sm leading-6 text-slate-700">
-                {result.statusText}
-              </p>
-
-              <p className="mt-3 text-sm leading-6 text-slate-700">
-                Your estimated break-even sale price is{" "}
-                <span className="font-semibold">
-                  {money(result.breakEvenPrice)}
-                </span>
-                . At that price, profit is approximately{" "}
-                <span className="font-semibold">
-                  {money(Math.max(0, result.breakEvenEval.profit))}
-                </span>
-                .
-              </p>
-
-              <p className="mt-3 text-sm leading-6 text-slate-700">
-                To generate your target profit, list at approximately{" "}
-                <span className="font-semibold">
-                  {money(result.targetProfitPrice)}
-                </span>
-                , which produces an estimated margin of{" "}
-                <span className="font-semibold">
-                  {percent(result.targetEval.margin)}
-                </span>
-                .
-              </p>
-
-              <p className="mt-3 text-sm leading-6 text-slate-700">
-                {result.recommendation}
-              </p>
-            </div>
-
-            <div className="mt-6">
-              <h3 className="mb-3 text-lg font-semibold">
-                Pricing scenario comparison
+          <div className="mt-6 space-y-6">
+            <div>
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-500">
+                Product costs
               </h3>
 
-              <div className="overflow-hidden rounded-2xl border">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-100 text-slate-600">
-                    <tr>
-                      <th className="px-4 py-3">Scenario</th>
-                      <th className="px-4 py-3">Price</th>
-                      <th className="px-4 py-3">Profit</th>
-                      <th className="px-4 py-3">Margin</th>
-                      <th className="px-4 py-3">Status</th>
-                    </tr>
-                  </thead>
+              <div className="space-y-4">
+                <NumberInput
+                  label="Product cost"
+                  prefix="$"
+                  value={productCost}
+                  onChange={setProductCost}
+                />
 
-                  <tbody className="divide-y bg-white">
-                    {result.scenarios.map((row) => (
-                      <tr
-                        key={row.label}
-                        className={
-                          row.label === "Target profit"
-                            ? "bg-blue-50 font-semibold"
-                            : ""
-                        }
-                      >
-                        <td className="px-4 py-3">{row.label}</td>
-                        <td className="px-4 py-3">{money(row.price)}</td>
-                        <td className="px-4 py-3">
-                          {money(Math.max(0, row.profit))}
-                        </td>
-                        <td className="px-4 py-3">
-                          {percent(Math.max(0, row.margin))}
-                        </td>
-                        <td className="px-4 py-3">
-                          <SmallStatusBadge status={row.status} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <NumberInput
+                  label="Inbound shipping"
+                  prefix="$"
+                  value={inboundShipping}
+                  onChange={setInboundShipping}
+                />
+
+                <NumberInput
+                  label="Prep / packaging cost"
+                  prefix="$"
+                  value={prepCost}
+                  onChange={setPrepCost}
+                />
               </div>
             </div>
-          </section>
+
+            <div>
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-500">
+                Amazon fee assumptions
+              </h3>
+
+              <div className="space-y-4">
+                <NumberInput
+                  label="Referral fee rate"
+                  suffix="%"
+                  value={referralFeeRate}
+                  onChange={setReferralFeeRate}
+                />
+
+                <NumberInput
+                  label="FBA fulfillment fee"
+                  prefix="$"
+                  value={fbaFee}
+                  onChange={setFbaFee}
+                />
+
+                <NumberInput
+                  label="Storage cost"
+                  prefix="$"
+                  value={storageCost}
+                  onChange={setStorageCost}
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-500">
+                Risk and profit assumptions
+              </h3>
+
+              <div className="space-y-4">
+                <NumberInput
+                  label="PPC cost per sale"
+                  prefix="$"
+                  value={ppcCost}
+                  onChange={setPpcCost}
+                />
+
+                <NumberInput
+                  label="Returns allowance"
+                  prefix="$"
+                  value={returnsAllowance}
+                  onChange={setReturnsAllowance}
+                />
+
+                <NumberInput
+                  label="Target profit"
+                  prefix="$"
+                  value={targetProfit}
+                  onChange={setTargetProfit}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
+            This calculator is an estimate. Actual Amazon referral fees, FBA
+            fees, storage fees, returns, PPC costs, placement fees, prep fees,
+            taxes, and category-specific charges may vary.
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-gray-400 bg-white p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-950">Results</h2>
+              <p className="mt-1 text-sm text-gray-600">
+                Minimum viable Amazon pricing thresholds.
+              </p>
+            </div>
+
+            <StatusBadge status={result.status} />
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <MetricCard
+              label="Break-even price"
+              value={toMoney(result.breakEvenPrice)}
+              helper="Minimum price before profit starts"
+              tone="blue"
+            />
+
+            <MetricCard
+              label="Target profit price"
+              value={toMoney(result.targetProfitPrice)}
+              helper="Estimated price needed for your target profit"
+              tone={targetTone}
+            />
+
+            <MetricCard
+              label="Safe buffer price"
+              value={toMoney(result.safeBufferPrice)}
+              helper="Target profit price plus 15% cushion"
+              tone="good"
+            />
+
+            <MetricCard
+              label="Aggressive floor"
+              value={toMoney(result.aggressiveFloorPrice)}
+              helper="Lower pricing test near target-profit price"
+              tone="warning"
+            />
+
+            <MetricCard
+              label="Target profit"
+              value={toMoney(result.targetEval.profit)}
+              helper="Estimated profit at target-profit price"
+              tone={targetTone}
+            />
+
+            <MetricCard
+              label="Target margin"
+              value={percent(result.targetEval.margin)}
+              helper="Profit divided by sale price"
+              tone={result.targetEval.margin >= 25 ? "good" : "warning"}
+            />
+
+            <MetricCard
+              label="Total fixed costs"
+              value={toMoney(result.fixedCosts)}
+              helper="Product, FBA, storage, inbound, prep, PPC, and returns"
+              tone="warning"
+            />
+
+            <MetricCard
+              label="Referral fee at target"
+              value={toMoney(result.targetEval.referralFee)}
+              helper="Estimated referral fee at target-profit price"
+              tone="warning"
+            />
+
+            <MetricCard
+              label="Amazon fees at target"
+              value={toMoney(result.amazonFeesAtTarget)}
+              helper="Referral fee plus FBA and storage cost"
+              tone="warning"
+            />
+
+            <MetricCard
+              label="Operational costs"
+              value={toMoney(result.totalOperationalCosts)}
+              helper="Product, inbound, prep, PPC, and returns allowance"
+            />
+          </div>
+
+          <div className="mt-6 rounded-xl bg-gray-100 p-5">
+            <h3 className="font-bold text-gray-950">What this means</h3>
+
+            <div className="mt-3 space-y-3 text-sm leading-6 text-gray-700">
+              <p>{result.statusText}</p>
+
+              <p>
+                Your estimated break-even sale price is{" "}
+                <strong>{toMoney(result.breakEvenPrice)}</strong>. At that
+                price, profit is approximately{" "}
+                <strong>{toMoney(Math.max(0, result.breakEvenEval.profit))}</strong>.
+              </p>
+
+              <p>
+                To generate your target profit, list at approximately{" "}
+                <strong>{toMoney(result.targetProfitPrice)}</strong>, which
+                produces an estimated margin of{" "}
+                <strong>{percent(result.targetEval.margin)}</strong>.
+              </p>
+
+              <p>{result.recommendation}</p>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <h3 className="mb-3 text-lg font-bold text-gray-950">
+              Pricing scenario comparison
+            </h3>
+
+            <div className="overflow-hidden rounded-2xl border border-gray-300">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-gray-100 text-gray-600">
+                  <tr>
+                    <th className="px-4 py-3">Scenario</th>
+                    <th className="px-4 py-3">Price</th>
+                    <th className="px-4 py-3">Profit</th>
+                    <th className="px-4 py-3">Margin</th>
+                    <th className="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y bg-white">
+                  {result.scenarios.map((row) => (
+                    <tr
+                      key={row.label}
+                      className={
+                        row.label === "Target profit"
+                          ? "bg-blue-50 font-bold"
+                          : ""
+                      }
+                    >
+                      <td className="px-4 py-3">{row.label}</td>
+                      <td className="px-4 py-3">{toMoney(row.price)}</td>
+                      <td className="px-4 py-3">
+                        {toMoney(Math.max(0, row.profit))}
+                      </td>
+                      <td className="px-4 py-3">
+                        {percent(Math.max(0, row.margin))}
+                      </td>
+                      <td className="px-4 py-3">
+                        <SmallStatusBadge status={row.status} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section className="mt-10 rounded-2xl border border-gray-300 bg-white p-6">
+        <h2 className="text-2xl font-bold text-gray-950">
+          How to use this Amazon Break-Even Calculator
+        </h2>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-4">
+          {[
+            [
+              "Enter product cost",
+              "Add product cost, inbound shipping, and prep or packaging cost.",
+            ],
+            [
+              "Add Amazon fees",
+              "Include referral fee rate, FBA fulfillment fee, and storage cost.",
+            ],
+            [
+              "Include risk costs",
+              "Add PPC cost per sale and returns allowance to avoid underestimating cost.",
+            ],
+            [
+              "Compare prices",
+              "Review break-even, target profit, aggressive, and safe-buffer pricing scenarios.",
+            ],
+          ].map(([title, text]) => (
+            <div key={title} className="rounded-xl bg-gray-50 p-4">
+              <p className="font-bold text-gray-950">{title}</p>
+              <p className="mt-3 text-sm leading-6 text-gray-600">{text}</p>
+            </div>
+          ))}
         </div>
-      </div>
+      </section>
+
+      <section className="mt-8 grid gap-8 lg:grid-cols-2">
+        <div className="rounded-2xl border border-gray-300 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Common Amazon break-even mistakes
+          </h2>
+
+          <ul className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
+            {[
+              "Ignoring PPC cost per sale when estimating break-even price.",
+              "Forgetting inbound shipping, prep, packaging, and storage costs.",
+              "Using a generic referral fee rate without checking the product category.",
+              "Leaving out returns allowance or replacement risk.",
+              "Sourcing products with too little room between break-even and target-profit price.",
+            ].map((item) => (
+              <li key={item} className="flex gap-3">
+                <span className="mt-1 rounded-full bg-red-100 px-2 text-xs font-bold text-red-600">
+                  ×
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="rounded-2xl border border-gray-300 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Understanding your Amazon results
+          </h2>
+
+          <div className="mt-5 space-y-4 text-sm leading-6 text-gray-600">
+            <p>
+              <strong className="text-green-700">Strong:</strong> Target-profit
+              pricing leaves a strong estimated Amazon margin.
+            </p>
+
+            <p>
+              <strong className="text-emerald-700">Healthy:</strong> The
+              break-even price appears workable under the current assumptions.
+            </p>
+
+            <p>
+              <strong className="text-amber-700">Tight:</strong> Break-even is
+              close to target-profit price, leaving less room for PPC, coupons,
+              returns, or competition.
+            </p>
+
+            <p>
+              <strong className="text-blue-700">Check Inputs:</strong> The
+              break-even price could not be calculated with the current fee
+              assumptions.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-gray-300 bg-white p-6">
+        <h2 className="text-2xl font-bold text-gray-950">
+          Ways to improve Amazon break-even pricing
+        </h2>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-4">
+          {[
+            [
+              "Lower product cost",
+              "Improve supplier pricing or reduce landed cost before scaling inventory.",
+            ],
+            [
+              "Reduce fulfillment drag",
+              "Review packaging, product size tier, FBA fee, storage cost, and inbound shipping.",
+            ],
+            [
+              "Control PPC cost",
+              "Avoid pricing products as profitable before including realistic ad cost per sale.",
+            ],
+            [
+              "Build margin buffer",
+              "Leave room for coupons, returns, price competition, and Amazon fee changes.",
+            ],
+          ].map(([title, text]) => (
+            <div key={title} className="rounded-xl bg-gray-50 p-4">
+              <p className="font-bold text-gray-950">{title}</p>
+              <p className="mt-3 text-sm leading-6 text-gray-600">{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-gray-300 bg-blue-50 p-6">
+        <h2 className="text-2xl font-bold text-gray-950">
+          Related Amazon seller tools
+        </h2>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["/amazon/fba-profit-calculator", "FBA Profit Calculator"],
+            ["/amazon/fee-calculator", "Fee Calculator"],
+            ["/amazon/pricing-calculator", "Pricing Calculator"],
+            ["/amazon/ppc-roi-calculator", "PPC ROI Calculator"],
+          ].map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className="rounded-xl border border-blue-500 bg-white p-4 text-sm font-bold text-blue-700 hover:bg-blue-100"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+      </section>
     </main>
-  );
-}
-
-function Input({
-  label,
-  value,
-  onChange,
-  prefix,
-  suffix,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  prefix?: string;
-  suffix?: string;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-sm font-medium text-slate-700">
-        {label}
-      </span>
-
-      <div className="flex overflow-hidden rounded-xl border bg-white focus-within:ring-2 focus-within:ring-blue-500">
-        {prefix && (
-          <span className="flex items-center bg-slate-100 px-3 text-slate-500">
-            {prefix}
-          </span>
-        )}
-
-        <input
-          type="number"
-          min="0"
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="w-full px-3 py-2 outline-none"
-        />
-
-        {suffix && (
-          <span className="flex items-center bg-slate-100 px-3 text-slate-500">
-            {suffix}
-          </span>
-        )}
-      </div>
-    </label>
-  );
-}
-
-function ResultCard({
-  label,
-  value,
-  variant = "default",
-}: {
-  label: string;
-  value: string;
-  variant?: "default" | "good" | "warning" | "danger" | "info";
-}) {
-  const styles = {
-    default: "border-slate-300 bg-slate-50",
-    good: "border-green-300 bg-green-50",
-    warning: "border-yellow-300 bg-yellow-50",
-    danger: "border-red-300 bg-red-50",
-    info: "border-blue-300 bg-blue-50",
-  };
-
-  return (
-    <div className={`rounded-xl border p-4 ${styles[variant]}`}>
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold">{value}</p>
-    </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const styles =
-    status === "Strong" || status === "Healthy"
-      ? "bg-green-100 text-green-700"
-      : status === "Tight"
-      ? "bg-yellow-100 text-yellow-700"
-      : status === "Check Inputs"
-      ? "bg-blue-100 text-blue-700"
-      : "bg-red-100 text-red-700";
-
-  return (
-    <span
-      className={`inline-flex w-fit items-center rounded-full px-4 py-2 text-sm font-semibold ${styles}`}
-    >
-      {status}
-    </span>
-  );
-}
-
-function SmallStatusBadge({ status }: { status: string }) {
-  const styles =
-    status === "Strong" || status === "Healthy"
-      ? "bg-green-100 text-green-700"
-      : status === "Break-even"
-      ? "bg-yellow-100 text-yellow-700"
-      : "bg-red-100 text-red-700";
-
-  return (
-    <span
-      className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${styles}`}
-    >
-      {status}
-    </span>
   );
 }

@@ -1,65 +1,122 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
+import { NumberInput } from "@/components/NumberInput";
+import { toMoney } from "@/lib/etsyCalculations";
 
-export default function EtsyShippingProfitCalculator() {
-  const [itemPrice, setItemPrice] = useState("35");
-  const [shippingCharged, setShippingCharged] = useState("5");
-  const [actualShippingCost, setActualShippingCost] = useState("8");
-  const [packagingCost, setPackagingCost] = useState("1.50");
-  const [productCost, setProductCost] = useState("10");
-  const [fees, setFees] = useState("4");
+function MetricCard({
+  label,
+  value,
+  helper,
+  tone = "neutral",
+}: {
+  label: string;
+  value: string;
+  helper?: string;
+  tone?: "neutral" | "good" | "blue" | "warning" | "bad";
+}) {
+  const tones = {
+    neutral: "border-gray-200 bg-gray-50",
+    good: "border-emerald-200 bg-emerald-50",
+    blue: "border-blue-200 bg-blue-50",
+    warning: "border-amber-200 bg-amber-50",
+    bad: "border-red-200 bg-red-50",
+  };
+
+  return (
+    <div className={`rounded-xl border p-4 ${tones[tone]}`}>
+      <p className="text-sm font-medium text-gray-600">{label}</p>
+      <p className="mt-2 text-2xl font-bold text-gray-950">{value}</p>
+      {helper ? <p className="mt-2 text-sm text-gray-600">{helper}</p> : null}
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const styles =
+    status === "Strong" || status === "Healthy"
+      ? "bg-emerald-100 text-emerald-700"
+      : status === "Thin Margin" || status === "Shipping Drag"
+        ? "bg-amber-100 text-amber-700"
+        : "bg-red-100 text-red-700";
+
+  return (
+    <span className={`rounded-full px-4 py-2 text-sm font-bold ${styles}`}>
+      {status}
+    </span>
+  );
+}
+
+function SmallStatusBadge({ status }: { status: string }) {
+  const styles =
+    status === "Strong" || status === "Healthy"
+      ? "bg-emerald-100 text-emerald-700"
+      : status === "Thin"
+        ? "bg-amber-100 text-amber-700"
+        : "bg-red-100 text-red-700";
+
+  return (
+    <span className={`rounded-full px-3 py-1 text-xs font-bold ${styles}`}>
+      {status}
+    </span>
+  );
+}
+
+export default function EtsyShippingProfitCalculatorPage() {
+  const [itemPrice, setItemPrice] = useState(35);
+  const [shippingCharged, setShippingCharged] = useState(5);
+  const [actualShippingCost, setActualShippingCost] = useState(8);
+  const [packagingCost, setPackagingCost] = useState(1.5);
+  const [productCost, setProductCost] = useState(10);
+  const [fees, setFees] = useState(4);
 
   const result = useMemo(() => {
-    const price = Number(itemPrice) || 0;
-    const charged = Number(shippingCharged) || 0;
-    const shippingCost = Number(actualShippingCost) || 0;
-    const packaging = Number(packagingCost) || 0;
-    const cost = Number(productCost) || 0;
-    const feeAmount = Number(fees) || 0;
-
-    const totalRevenue = price + charged;
-    const totalCosts = shippingCost + packaging + cost + feeAmount;
+    const totalRevenue = itemPrice + shippingCharged;
+    const totalCosts = actualShippingCost + packagingCost + productCost + fees;
     const profit = totalRevenue - totalCosts;
     const margin = totalRevenue > 0 ? (profit / totalRevenue) * 100 : 0;
 
-    const shippingDifference = charged - shippingCost;
+    const shippingDifference = shippingCharged - actualShippingCost;
     const shippingLabel =
-      shippingDifference < 0 ? "Shipping subsidy required" : "Shipping surplus";
+      shippingDifference < 0 ? "Shipping subsidy" : "Shipping surplus";
 
     const breakEvenShipping = Math.max(
       0,
-      shippingCost + packaging + cost + feeAmount - price
+      actualShippingCost + packagingCost + productCost + fees - itemPrice,
     );
 
     const freeShippingProfit =
-      price - (shippingCost + packaging + cost + feeAmount);
+      itemPrice - (actualShippingCost + packagingCost + productCost + fees);
 
-    const flat5Profit = price + 5 - totalCosts;
-    const flat10Profit = price + 10 - totalCosts;
+    const flat5Profit =
+      itemPrice + 5 - (actualShippingCost + packagingCost + productCost + fees);
+
+    const flat10Profit =
+      itemPrice + 10 - (actualShippingCost + packagingCost + productCost + fees);
 
     let status = "Healthy";
     let statusText =
       "Your shipping setup appears sustainable and leaves a healthy margin.";
     let recommendation =
-      "Your shipping pricing appears competitive while maintaining healthy profit.";
+      "Your shipping pricing appears workable. Continue watching actual carrier costs, packaging costs, and refund or replacement losses.";
 
     if (profit <= 0) {
       status = "Losing Money";
       statusText =
         "This setup is losing money after shipping, packaging, product cost, and fees.";
       recommendation =
-        "Consider raising your item price, charging more for shipping, lowering packaging costs, or adjusting the listing before scaling sales.";
+        "Raise the item price, charge more for shipping, reduce fulfillment costs, or revise the listing before scaling sales.";
     } else if (margin < 10) {
       status = "Thin Margin";
       statusText =
-        "You are still profitable, but shipping and fulfillment costs are leaving a thin margin.";
+        "This setup is still profitable, but shipping and fulfillment costs leave a thin margin.";
       recommendation =
-        "Consider increasing your item price slightly or reducing fulfillment costs before offering larger discounts or ads.";
+        "Increase price slightly, reduce packaging cost, or avoid stacking discounts and ads on this listing.";
     } else if (shippingDifference < 0 && margin < 25) {
       status = "Shipping Drag";
       statusText =
-        "The listing is profitable, but you are subsidizing shipping.";
+        "This listing is profitable, but the buyer shipping charge does not fully cover your actual shipping cost.";
       recommendation =
         "Make sure your item price is high enough to absorb the shipping subsidy without weakening your margin.";
     } else if (margin >= 30) {
@@ -67,31 +124,33 @@ export default function EtsyShippingProfitCalculator() {
       statusText =
         "Shipping costs are well covered by your pricing, and profitability remains strong.";
       recommendation =
-        "This shipping setup looks sustainable. You may be able to test free shipping, bundles, or small promotions while preserving profit.";
+        "This setup may have room for free shipping tests, bundles, or small promotions while preserving profit.";
     }
+
+    const getScenarioStatus = (scenarioProfit: number, scenarioMargin: number) => {
+      if (scenarioProfit <= 0) return "Losing Money";
+      if (scenarioMargin < 10) return "Thin";
+      if (scenarioMargin >= 30) return "Strong";
+      return "Healthy";
+    };
 
     const scenarios = [
       { label: "Free shipping", charge: 0 },
       { label: "$5 flat", charge: 5 },
-      { label: "Current", charge: charged },
+      { label: "Current", charge: shippingCharged },
       { label: "$10 flat", charge: 10 },
     ].map((scenario) => {
-      const scenarioRevenue = price + scenario.charge;
+      const scenarioRevenue = itemPrice + scenario.charge;
       const scenarioProfit = scenarioRevenue - totalCosts;
       const scenarioMargin =
         scenarioRevenue > 0 ? (scenarioProfit / scenarioRevenue) * 100 : 0;
 
-      let scenarioStatus = "Healthy";
-
-      if (scenarioProfit <= 0) scenarioStatus = "Losing Money";
-      else if (scenarioMargin < 10) scenarioStatus = "Thin";
-      else if (scenarioMargin >= 30) scenarioStatus = "Strong";
-
       return {
         ...scenario,
+        revenue: scenarioRevenue,
         profit: scenarioProfit,
         margin: scenarioMargin,
-        status: scenarioStatus,
+        status: getScenarioStatus(scenarioProfit, scenarioMargin),
       };
     });
 
@@ -120,344 +179,403 @@ export default function EtsyShippingProfitCalculator() {
     fees,
   ]);
 
-  const money = (value: number) =>
-    value.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-
   const percent = (value: number) => `${value.toFixed(1)}%`;
 
+  const profitTone =
+    result.profit <= 0
+      ? "bad"
+      : result.margin < 10
+        ? "warning"
+        : "good";
+
+  const shippingTone = result.shippingDifference < 0 ? "warning" : "blue";
+
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
-      <div className="mx-auto max-w-5xl">
-        <section className="mb-8">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-blue-600">
-            Etsy Seller Tool
+    <main className="mx-auto max-w-6xl px-6 py-12">
+      <section className="max-w-3xl">
+        <p className="text-sm font-bold uppercase tracking-wide text-blue-700">
+          Etsy Seller Tools
+        </p>
+
+        <h1 className="mt-3 text-4xl font-bold tracking-tight text-gray-950">
+          Etsy Shipping Profit Calculator
+        </h1>
+
+        <p className="mt-4 text-lg leading-8 text-gray-600">
+          Estimate how shipping charges, packaging, product costs, and
+          fulfillment expenses affect Etsy listing profitability.
+        </p>
+      </section>
+
+      <div className="mt-10 grid items-start gap-8 lg:grid-cols-[0.9fr_1.4fr]">
+        <section className="rounded-2xl border border-gray-400 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Shipping inputs
+          </h2>
+
+          <p className="mt-3 text-sm leading-6 text-gray-600">
+            Enter your listing price, buyer shipping charge, actual shipping
+            cost, packaging cost, product cost, and estimated marketplace fees.
           </p>
 
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Etsy Shipping Profit Calculator
-          </h1>
+          <div className="mt-6 space-y-6">
+            <div>
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-500">
+                Sale details
+              </h3>
 
-          <p className="mt-3 max-w-2xl text-slate-600">
-            Estimate how shipping charges, packaging, and fulfillment costs
-            affect your Etsy listing profitability.
-          </p>
+              <div className="space-y-4">
+                <NumberInput
+                  label="Item price"
+                  prefix="$"
+                  value={itemPrice}
+                  onChange={setItemPrice}
+                />
+
+                <NumberInput
+                  label="Shipping charged to buyer"
+                  prefix="$"
+                  value={shippingCharged}
+                  onChange={setShippingCharged}
+                />
+
+                <NumberInput
+                  label="Marketplace fees"
+                  prefix="$"
+                  value={fees}
+                  onChange={setFees}
+                />
+              </div>
+            </div>
+
+            <div>
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-500">
+                Fulfillment costs
+              </h3>
+
+              <div className="space-y-4">
+                <NumberInput
+                  label="Actual shipping cost"
+                  prefix="$"
+                  value={actualShippingCost}
+                  onChange={setActualShippingCost}
+                />
+
+                <NumberInput
+                  label="Packaging cost"
+                  prefix="$"
+                  value={packagingCost}
+                  onChange={setPackagingCost}
+                />
+
+                <NumberInput
+                  label="Product cost"
+                  prefix="$"
+                  value={productCost}
+                  onChange={setProductCost}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
+            This calculator estimates shipping profitability. Actual results may
+            vary based on carrier rate changes, packaging waste, dimensional
+            pricing, insurance, refunds, replacements, and return shipping.
+          </div>
         </section>
 
-        <div className="grid items-start gap-6 lg:grid-cols-[0.95fr_1.25fr]">
-          <section className="rounded-2xl border bg-white p-5 shadow-sm">
-            <h2 className="mb-4 text-xl font-semibold">Shipping details</h2>
-
-            <div className="space-y-4">
-              <Input
-                label="Item price"
-                value={itemPrice}
-                onChange={setItemPrice}
-                prefix="$"
-              />
-
-              <Input
-                label="Shipping charged to buyer"
-                value={shippingCharged}
-                onChange={setShippingCharged}
-                prefix="$"
-                helper="Enter 0 if you offer free shipping."
-              />
-
-              <Input
-                label="Actual shipping cost"
-                value={actualShippingCost}
-                onChange={setActualShippingCost}
-                prefix="$"
-                helper="What you actually pay to ship the order."
-              />
-
-              <Input
-                label="Packaging cost"
-                value={packagingCost}
-                onChange={setPackagingCost}
-                prefix="$"
-                helper="Boxes, mailers, labels, tape, inserts, and other packaging costs."
-              />
-
-              <Input
-                label="Product cost"
-                value={productCost}
-                onChange={setProductCost}
-                prefix="$"
-              />
-
-              <Input
-                label="Marketplace fees"
-                value={fees}
-                onChange={setFees}
-                prefix="$"
-                helper="Use your estimated Etsy fees, payment fees, and ad-related fees."
-              />
-            </div>
-          </section>
-
-          <section className="rounded-2xl border bg-white p-5 shadow-sm">
-            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-xl font-semibold">Results</h2>
-                <p className="text-sm text-slate-500">
-                  Based on your item price, shipping charge, and fulfillment
-                  costs.
-                </p>
-              </div>
-
-              <StatusBadge status={result.status} />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <ResultCard
-                label="Profit"
-                value={money(result.profit)}
-                variant={result.profit > 0 ? "good" : "danger"}
-              />
-
-              <ResultCard
-                label="Margin"
-                value={percent(result.margin)}
-                variant={
-                  result.margin < 10
-                    ? "danger"
-                    : result.margin < 20
-                    ? "warning"
-                    : "good"
-                }
-              />
-
-              <ResultCard
-                label={result.shippingLabel}
-                value={money(Math.abs(result.shippingDifference))}
-                variant={result.shippingDifference < 0 ? "danger" : "info"}
-              />
-
-              <ResultCard
-                label="Break-even shipping"
-                value={money(result.breakEvenShipping)}
-                variant="warning"
-              />
-
-              <ResultCard
-                label="Total costs"
-                value={money(result.totalCosts)}
-              />
-
-              <ResultCard
-                label="Free shipping profit"
-                value={money(result.freeShippingProfit)}
-                variant={result.freeShippingProfit > 0 ? "good" : "danger"}
-              />
-
-              <ResultCard
-                label="$5 flat shipping profit"
-                value={money(result.flat5Profit)}
-                variant={result.flat5Profit > 0 ? "good" : "danger"}
-              />
-
-              <ResultCard
-                label="$10 flat shipping profit"
-                value={money(result.flat10Profit)}
-                variant={result.flat10Profit > 0 ? "good" : "danger"}
-              />
-            </div>
-
-            <div className="mt-6 rounded-2xl bg-slate-100 p-5">
-              <h3 className="font-semibold">What this means</h3>
-
-              <p className="mt-2 text-sm leading-6 text-slate-700">
-                {result.statusText}
+        <section className="rounded-2xl border border-gray-400 bg-white p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-950">Results</h2>
+              <p className="mt-1 text-sm text-gray-600">
+                Shipping profitability at a glance.
               </p>
+            </div>
 
-              <p className="mt-3 text-sm leading-6 text-slate-700">
-                Your total revenue is{" "}
-                <span className="font-semibold">
-                  {money(result.totalRevenue)}
-                </span>{" "}
-                and your total cost is{" "}
-                <span className="font-semibold">
-                  {money(result.totalCosts)}
-                </span>
-                , leaving an estimated profit of{" "}
-                <span className="font-semibold">{money(result.profit)}</span>.
+            <StatusBadge status={result.status} />
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <MetricCard
+              label="Estimated profit"
+              value={toMoney(result.profit)}
+              helper="Revenue minus shipping, product, packaging, and fees"
+              tone={profitTone}
+            />
+
+            <MetricCard
+              label="Profit margin"
+              value={percent(result.margin)}
+              helper="Profit divided by total revenue"
+              tone={profitTone}
+            />
+
+            <MetricCard
+              label={result.shippingLabel}
+              value={toMoney(Math.abs(result.shippingDifference))}
+              helper={
+                result.shippingDifference < 0
+                  ? "Shipping cost not covered by buyer charge"
+                  : "Shipping charge above actual shipping cost"
+              }
+              tone={shippingTone}
+            />
+
+            <MetricCard
+              label="Break-even shipping charge"
+              value={toMoney(result.breakEvenShipping)}
+              helper="Shipping charge needed to avoid losing money"
+              tone="blue"
+            />
+
+            <MetricCard
+              label="Free shipping profit"
+              value={toMoney(result.freeShippingProfit)}
+              helper="Estimated profit if buyer shipping charge is $0"
+              tone={result.freeShippingProfit > 0 ? "good" : "bad"}
+            />
+
+            <MetricCard
+              label="$5 flat shipping profit"
+              value={toMoney(result.flat5Profit)}
+              helper="Estimated profit with $5 buyer shipping"
+              tone={result.flat5Profit > 0 ? "good" : "bad"}
+            />
+
+            <MetricCard
+              label="$10 flat shipping profit"
+              value={toMoney(result.flat10Profit)}
+              helper="Estimated profit with $10 buyer shipping"
+              tone={result.flat10Profit > 0 ? "good" : "bad"}
+            />
+
+            <MetricCard
+              label="Total combined costs"
+              value={toMoney(result.totalCosts)}
+              helper="Product, shipping, packaging, and fees"
+            />
+          </div>
+
+          <div className="mt-6 rounded-xl bg-gray-100 p-5">
+            <h3 className="font-bold text-gray-950">What this means</h3>
+
+            <div className="mt-3 space-y-3 text-sm leading-6 text-gray-700">
+              <p>{result.statusText}</p>
+
+              <p>
+                Your total estimated revenue is{" "}
+                <strong>{toMoney(result.totalRevenue)}</strong> and your total
+                combined cost is{" "}
+                <strong>{toMoney(result.totalCosts)}</strong>, leaving estimated
+                profit of <strong>{toMoney(result.profit)}</strong>.
               </p>
 
               {result.shippingDifference < 0 ? (
-                <p className="mt-3 text-sm leading-6 text-slate-700">
+                <p>
                   You are covering{" "}
-                  <span className="font-semibold">
-                    {money(Math.abs(result.shippingDifference))}
-                  </span>{" "}
-                  of the shipping cost inside your item price or profit margin.
+                  <strong>{toMoney(Math.abs(result.shippingDifference))}</strong>{" "}
+                  of the shipping cost through your item price or profit margin.
                 </p>
               ) : (
-                <p className="mt-3 text-sm leading-6 text-slate-700">
-                  Your shipping charge is covering the shipping cost with an
-                  extra{" "}
-                  <span className="font-semibold">
-                    {money(result.shippingDifference)}
-                  </span>{" "}
-                  left over before packaging and other costs.
+                <p>
+                  Your shipping charge covers actual shipping with{" "}
+                  <strong>{toMoney(result.shippingDifference)}</strong> left over
+                  before packaging and other costs.
                 </p>
               )}
 
-              <p className="mt-3 text-sm leading-6 text-slate-700">
-                {result.recommendation}
-              </p>
+              <p>{result.recommendation}</p>
             </div>
+          </div>
 
-            <div className="mt-6">
-              <h3 className="mb-3 text-lg font-semibold">
-                Shipping strategy comparison
-              </h3>
+          <div className="mt-6">
+            <h3 className="mb-3 text-lg font-bold text-gray-950">
+              Shipping strategy comparison
+            </h3>
 
-              <div className="overflow-hidden rounded-2xl border">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-100 text-slate-600">
-                    <tr>
-                      <th className="px-4 py-3">Strategy</th>
-                      <th className="px-4 py-3">Charge</th>
-                      <th className="px-4 py-3">Profit</th>
-                      <th className="px-4 py-3">Margin</th>
-                      <th className="px-4 py-3">Status</th>
+            <div className="overflow-hidden rounded-2xl border border-gray-300">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-gray-100 text-gray-600">
+                  <tr>
+                    <th className="px-4 py-3">Strategy</th>
+                    <th className="px-4 py-3">Charge</th>
+                    <th className="px-4 py-3">Profit</th>
+                    <th className="px-4 py-3">Margin</th>
+                    <th className="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y bg-white">
+                  {result.scenarios.map((row) => (
+                    <tr
+                      key={row.label}
+                      className={
+                        row.label === "Current" ? "bg-blue-50 font-bold" : ""
+                      }
+                    >
+                      <td className="px-4 py-3">{row.label}</td>
+                      <td className="px-4 py-3">{toMoney(row.charge)}</td>
+                      <td className="px-4 py-3">{toMoney(row.profit)}</td>
+                      <td className="px-4 py-3">{percent(row.margin)}</td>
+                      <td className="px-4 py-3">
+                        <SmallStatusBadge status={row.status} />
+                      </td>
                     </tr>
-                  </thead>
-
-                  <tbody className="divide-y bg-white">
-                    {result.scenarios.map((row) => (
-                      <tr key={row.label}>
-                        <td className="px-4 py-3 font-semibold">
-                          {row.label}
-                        </td>
-                        <td className="px-4 py-3">{money(row.charge)}</td>
-                        <td className="px-4 py-3 font-semibold">
-                          {money(row.profit)}
-                        </td>
-                        <td className="px-4 py-3">{percent(row.margin)}</td>
-                        <td className="px-4 py-3">
-                          <SmallStatusBadge status={row.status} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </section>
+          </div>
+        </section>
+      </div>
+
+      <section className="mt-10 rounded-2xl border border-gray-300 bg-white p-6">
+        <h2 className="text-2xl font-bold text-gray-950">
+          How to use this Etsy Shipping Profit Calculator
+        </h2>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-4">
+          {[
+            [
+              "Enter listing price",
+              "Use the item price before adding any separate shipping charge.",
+            ],
+            [
+              "Add shipping costs",
+              "Enter the actual postage, label, packaging, and product fulfillment costs.",
+            ],
+            [
+              "Compare strategies",
+              "Review free shipping, flat-rate shipping, and current shipping charge scenarios.",
+            ],
+            [
+              "Check margin",
+              "Use profit and margin to decide whether shipping is weakening the listing.",
+            ],
+          ].map(([title, text]) => (
+            <div key={title} className="rounded-xl bg-gray-50 p-4">
+              <p className="font-bold text-gray-950">{title}</p>
+              <p className="mt-3 text-sm leading-6 text-gray-600">{text}</p>
+            </div>
+          ))}
         </div>
-      </div>
+      </section>
+
+      <section className="mt-8 grid gap-8 lg:grid-cols-2">
+        <div className="rounded-2xl border border-gray-300 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Common shipping profit mistakes
+          </h2>
+
+          <ul className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
+            {[
+              "Offering free shipping without raising item price enough.",
+              "Ignoring packaging, labels, tape, inserts, and shipping supplies.",
+              "Using old carrier rates after postage increases.",
+              "Forgetting dimensional weight or oversized package charges.",
+              "Scaling ads on listings with weak shipping-adjusted profit.",
+            ].map((item) => (
+              <li key={item} className="flex gap-3">
+                <span className="mt-1 rounded-full bg-red-100 px-2 text-xs font-bold text-red-600">
+                  ×
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="rounded-2xl border border-gray-300 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Understanding your results
+          </h2>
+
+          <div className="mt-5 space-y-4 text-sm leading-6 text-gray-600">
+            <p>
+              <strong className="text-emerald-700">Strong:</strong> Shipping
+              and fulfillment costs are well covered with healthy profit.
+            </p>
+
+            <p>
+              <strong className="text-emerald-700">Healthy:</strong> The setup
+              appears profitable, but costs should still be monitored.
+            </p>
+
+            <p>
+              <strong className="text-amber-700">Shipping Drag:</strong> You
+              are subsidizing shipping and may need a higher item price.
+            </p>
+
+            <p>
+              <strong className="text-amber-700">Thin Margin:</strong> The
+              listing is profitable, but shipping costs leave little room for
+              discounts, refunds, or ads.
+            </p>
+
+            <p>
+              <strong className="text-red-700">Losing Money:</strong> The setup
+              does not cover shipping, product, packaging, and fee costs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-gray-300 bg-white p-6">
+        <h2 className="text-2xl font-bold text-gray-950">
+          Ways to improve shipping profitability
+        </h2>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-4">
+          {[
+            [
+              "Raise item price",
+              "Build shipping subsidies into the item price when offering free or reduced shipping.",
+            ],
+            [
+              "Reduce package weight",
+              "Use lighter packaging, better box sizes, and lower-cost fulfillment methods where possible.",
+            ],
+            [
+              "Review carrier rates",
+              "Compare current postage costs and update pricing when shipping rates change.",
+            ],
+            [
+              "Bundle carefully",
+              "Use bundles to spread shipping cost across a larger order value and improve margin.",
+            ],
+          ].map(([title, text]) => (
+            <div key={title} className="rounded-xl bg-gray-50 p-4">
+              <p className="font-bold text-gray-950">{title}</p>
+              <p className="mt-3 text-sm leading-6 text-gray-600">{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-gray-300 bg-blue-50 p-6">
+        <h2 className="text-2xl font-bold text-gray-950">
+          Related Etsy seller tools
+        </h2>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["/etsy/profit-calculator", "Profit Calculator"],
+            ["/etsy/fee-calculator", "Fee Calculator"],
+            ["/etsy/pricing-calculator", "Pricing Calculator"],
+            ["/etsy/refund-impact-calculator", "Refund Impact Calculator"],
+          ].map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className="rounded-xl border border-blue-500 bg-white p-4 text-sm font-bold text-blue-700 hover:bg-blue-100"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+      </section>
     </main>
-  );
-}
-
-function Input({
-  label,
-  value,
-  onChange,
-  prefix,
-  suffix,
-  helper,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  prefix?: string;
-  suffix?: string;
-  helper?: string;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-sm font-medium text-slate-700">
-        {label}
-      </span>
-
-      <div className="flex overflow-hidden rounded-xl border bg-white focus-within:ring-2 focus-within:ring-blue-500">
-        {prefix && (
-          <span className="flex items-center bg-slate-100 px-3 text-slate-500">
-            {prefix}
-          </span>
-        )}
-
-        <input
-          type="number"
-          min="0"
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="w-full px-3 py-2 outline-none"
-        />
-
-        {suffix && (
-          <span className="flex items-center bg-slate-100 px-3 text-slate-500">
-            {suffix}
-          </span>
-        )}
-      </div>
-
-      {helper && <p className="mt-1 text-xs text-slate-500">{helper}</p>}
-    </label>
-  );
-}
-
-function ResultCard({
-  label,
-  value,
-  variant = "default",
-}: {
-  label: string;
-  value: string;
-  variant?: "default" | "good" | "warning" | "danger" | "info";
-}) {
-  const styles = {
-    default: "border-slate-300 bg-slate-50",
-    good: "border-green-300 bg-green-50",
-    warning: "border-yellow-300 bg-yellow-50",
-    danger: "border-red-300 bg-red-50",
-    info: "border-blue-300 bg-blue-50",
-  };
-
-  return (
-    <div className={`rounded-xl border p-4 ${styles[variant]}`}>
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold">{value}</p>
-    </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const styles =
-    status === "Strong" || status === "Healthy"
-      ? "bg-green-100 text-green-700"
-      : status === "Thin Margin" || status === "Shipping Drag"
-      ? "bg-yellow-100 text-yellow-700"
-      : "bg-red-100 text-red-700";
-
-  return (
-    <span
-      className={`inline-flex w-fit items-center rounded-full px-4 py-2 text-sm font-semibold ${styles}`}
-    >
-      {status}
-    </span>
-  );
-}
-
-function SmallStatusBadge({ status }: { status: string }) {
-  const styles =
-    status === "Strong" || status === "Healthy"
-      ? "bg-green-100 text-green-700"
-      : status === "Thin"
-      ? "bg-yellow-100 text-yellow-700"
-      : "bg-red-100 text-red-700";
-
-  return (
-    <span
-      className={`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${styles}`}
-    >
-      {status}
-    </span>
   );
 }

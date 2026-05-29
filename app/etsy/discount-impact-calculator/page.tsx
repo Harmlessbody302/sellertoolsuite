@@ -1,6 +1,110 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
+
+function MetricCard({
+  label,
+  value,
+  helper,
+  tone = "neutral",
+}: {
+  label: string;
+  value: string;
+  helper?: string;
+  tone?: "neutral" | "good" | "blue" | "warning" | "bad";
+}) {
+  const tones = {
+    neutral: "border-gray-200 bg-gray-50",
+    good: "border-emerald-200 bg-emerald-50",
+    blue: "border-blue-200 bg-blue-50",
+    warning: "border-amber-200 bg-amber-50",
+    bad: "border-red-200 bg-red-50",
+  };
+
+  return (
+    <div className={`rounded-xl border p-4 ${tones[tone]}`}>
+      <p className="text-sm font-medium text-gray-600">{label}</p>
+      <p className="mt-2 text-2xl font-bold text-gray-950">{value}</p>
+      {helper ? <p className="mt-2 text-sm text-gray-600">{helper}</p> : null}
+    </div>
+  );
+}
+
+function Input({
+  label,
+  value,
+  onChange,
+  prefix,
+  suffix,
+  helper,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  prefix?: string;
+  suffix?: string;
+  helper?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-sm font-medium text-gray-700">
+        {label}
+      </span>
+
+      <div className="flex overflow-hidden rounded-xl border border-gray-400 bg-white focus-within:ring-2 focus-within:ring-blue-500">
+        {prefix ? (
+          <span className="flex items-center bg-gray-100 px-3 text-gray-500">
+            {prefix}
+          </span>
+        ) : null}
+
+        <input
+          type="number"
+          min="0"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="w-full px-3 py-2 text-gray-950 outline-none"
+        />
+
+        {suffix ? (
+          <span className="flex items-center bg-gray-100 px-3 text-gray-500">
+            {suffix}
+          </span>
+        ) : null}
+      </div>
+
+      {helper ? <p className="mt-1 text-xs text-gray-500">{helper}</p> : null}
+    </label>
+  );
+}
+
+function StatusBadge({
+  status,
+  small = false,
+}: {
+  status: string;
+  small?: boolean;
+}) {
+  const styles =
+    status === "Safe"
+      ? "bg-emerald-100 text-emerald-700"
+      : status === "Moderate"
+        ? "bg-amber-100 text-amber-700"
+        : status === "Risky"
+          ? "bg-orange-100 text-orange-700"
+          : "bg-red-100 text-red-700";
+
+  return (
+    <span
+      className={`rounded-full font-bold ${styles} ${
+        small ? "px-3 py-1 text-xs" : "px-4 py-2 text-sm"
+      }`}
+    >
+      {status}
+    </span>
+  );
+}
 
 export default function DiscountImpactCalculator() {
   const [price, setPrice] = useState("25");
@@ -22,10 +126,8 @@ export default function DiscountImpactCalculator() {
     const profitBefore = originalPrice - itemCost - feeAmount;
     const profitAfter = salePrice - itemCost - feeAmount;
 
-    const marginBefore =
-      originalPrice > 0 ? (profitBefore / originalPrice) * 100 : 0;
-
-    const marginAfter = salePrice > 0 ? (profitAfter / salePrice) * 100 : 0;
+    const marginBefore = originalPrice > 0 ? profitBefore / originalPrice : 0;
+    const marginAfter = salePrice > 0 ? profitAfter / salePrice : 0;
 
     const profitLostPerSale = profitBefore - profitAfter;
     const monthlyProfitBefore = profitBefore * sales;
@@ -38,6 +140,7 @@ export default function DiscountImpactCalculator() {
         : 0;
 
     const breakEvenPrice = itemCost + feeAmount;
+
     const maxSafeDiscount =
       originalPrice > 0
         ? ((originalPrice - breakEvenPrice) / originalPrice) * 100
@@ -45,43 +148,39 @@ export default function DiscountImpactCalculator() {
 
     let status = "Safe";
     let statusText = "This discount still leaves you with healthy profit.";
+    let recommendation =
+      "This discount appears sustainable. It may help increase sales volume without significantly hurting margin.";
 
     if (profitAfter <= 0) {
       status = "Unprofitable";
       statusText =
         "This discount causes you to lose money or break even on each sale.";
-    } else if (marginAfter < 10) {
+      recommendation =
+        "Reduce the discount, increase pricing, lower costs, or avoid discounting this item.";
+    } else if (marginAfter < 0.1) {
       status = "Risky";
-      statusText =
-        "This discount leaves a very thin margin. It may only make sense for clearance, liquidation, or customer acquisition.";
-    } else if (marginAfter < 20) {
+      statusText = "This discount leaves a very thin margin.";
+      recommendation =
+        "Only consider this for clearance, liquidation, or short-term customer acquisition.";
+    } else if (marginAfter < 0.2) {
       status = "Moderate";
       statusText =
-        "This discount still makes profit, but it meaningfully reduces your margin.";
+        "This discount still makes profit, but meaningfully reduces your margin.";
+      recommendation =
+        "Monitor carefully and avoid stacking additional promotions.";
     }
-
-    const lossSeverity: "default" | "good" | "warning" | "danger" =
-  monthlyProfitLost <= 0
-    ? "good"
-    : monthlyProfitLost < monthlyProfitBefore * 0.15
-    ? "good"
-    : monthlyProfitLost < monthlyProfitBefore * 0.35
-    ? "warning"
-    : "danger";
 
     const comparisonDiscounts = [10, 15, 20, 25, 30].map((rate) => {
       const comparisonSalePrice = originalPrice - originalPrice * (rate / 100);
       const comparisonProfit = comparisonSalePrice - itemCost - feeAmount;
       const comparisonMargin =
-        comparisonSalePrice > 0
-          ? (comparisonProfit / comparisonSalePrice) * 100
-          : 0;
+        comparisonSalePrice > 0 ? comparisonProfit / comparisonSalePrice : 0;
 
       let comparisonStatus = "Safe";
 
       if (comparisonProfit <= 0) comparisonStatus = "Unprofitable";
-      else if (comparisonMargin < 10) comparisonStatus = "Risky";
-      else if (comparisonMargin < 20) comparisonStatus = "Moderate";
+      else if (comparisonMargin < 0.1) comparisonStatus = "Risky";
+      else if (comparisonMargin < 0.2) comparisonStatus = "Moderate";
 
       return {
         rate,
@@ -100,16 +199,13 @@ export default function DiscountImpactCalculator() {
       marginBefore,
       marginAfter,
       profitLostPerSale,
-      monthlyProfitBefore,
-      monthlyProfitAfter,
       monthlyProfitLost,
       extraUnitsNeeded,
       maxSafeDiscount,
       status,
       statusText,
-      lossSeverity,
+      recommendation,
       comparisonDiscounts,
-      sales,
     };
   }, [price, cost, fees, discount, monthlySales]);
 
@@ -119,321 +215,306 @@ export default function DiscountImpactCalculator() {
       currency: "USD",
     });
 
-  const percent = (value: number) => `${value.toFixed(1)}%`;
+  const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+  const resultTone =
+    result.profitAfter <= 0
+      ? "bad"
+      : result.marginAfter < 0.1
+        ? "bad"
+        : result.marginAfter < 0.2
+          ? "warning"
+          : "good";
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
-      <div className="mx-auto max-w-5xl">
-        <section className="mb-8">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-blue-600">
-            Etsy Seller Tool
+    <main className="mx-auto max-w-6xl px-6 py-12">
+      <section className="max-w-3xl">
+        <p className="text-sm font-bold uppercase tracking-wide text-blue-700">
+          Etsy Seller Tools
+        </p>
+
+        <h1 className="mt-3 text-4xl font-bold tracking-tight text-gray-950">
+          Discount Impact Calculator
+        </h1>
+
+        <p className="mt-4 text-lg leading-8 text-gray-600">
+          See how Etsy discounts and coupons affect your profit, margin, and
+          monthly earnings before launching a sale.
+        </p>
+      </section>
+
+      <div className="mt-10 grid items-start gap-8 lg:grid-cols-[0.9fr_1.4fr]">
+        <section className="rounded-2xl border border-gray-400 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Discount inputs
+          </h2>
+
+          <p className="mt-3 text-sm leading-6 text-gray-600">
+            Enter your regular price, costs, fees, discount amount, and expected
+            discounted sales volume.
           </p>
 
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Discount Impact Calculator
-          </h1>
+          <div className="mt-6 space-y-4">
+            <Input
+              label="Original item price"
+              value={price}
+              onChange={setPrice}
+              prefix="$"
+            />
 
-          <p className="mt-3 max-w-2xl text-slate-600">
-            See how a sale or coupon affects your profit, margin, and monthly
-            earnings before running a discount.
-          </p>
+            <Input
+              label="Item cost"
+              value={cost}
+              onChange={setCost}
+              prefix="$"
+              helper="Materials, production, packaging, or product cost."
+            />
+
+            <Input
+              label="Estimated fees"
+              value={fees}
+              onChange={setFees}
+              prefix="$"
+              helper="Marketplace fees, ads, payment processing, and shipping subsidy."
+            />
+
+            <div>
+              <Input
+                label="Discount percentage"
+                value={discount}
+                onChange={setDiscount}
+                suffix="%"
+              />
+
+              <div className="mt-2 flex flex-wrap gap-2">
+                {[10, 15, 20, 25, 30].map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => setDiscount(String(preset))}
+                    className={`rounded-full border px-3 py-1 text-xs font-bold ${
+                      Number(discount) === preset
+                        ? "border-blue-600 bg-blue-600 text-white"
+                        : "border-gray-300 bg-white text-gray-700"
+                    }`}
+                  >
+                    {preset}%
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Input
+              label="Expected sales volume"
+              value={monthlySales}
+              onChange={setMonthlySales}
+              helper="Estimated discounted monthly sales."
+            />
+          </div>
+
+          <div className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm font-medium leading-6 text-amber-900">
+            This calculator is an estimate. Actual results may vary due to Etsy
+            fees, refunds, repeat customers, ad traffic, and listing changes.
+          </div>
         </section>
 
-        <div className="grid items-start gap-6 lg:grid-cols-[0.95fr_1.25fr]">
-          <section className="rounded-2xl border bg-white p-5 shadow-sm">
-            <h2 className="mb-4 text-xl font-semibold">Discount details</h2>
+        <section className="rounded-2xl border border-gray-400 bg-white p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-950">Results</h2>
+              <p className="mt-1 text-sm text-gray-600">
+                Discount profitability at a glance.
+              </p>
+            </div>
 
-            <div className="space-y-4">
-              <Input
-                label="Original item price"
-                value={price}
-                onChange={setPrice}
-                prefix="$"
-              />
+            <StatusBadge status={result.status} />
+          </div>
 
-              <Input
-                label="Item cost"
-                value={cost}
-                onChange={setCost}
-                prefix="$"
-                helper="Materials, production, packaging, or product cost."
-              />
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <MetricCard label="Sale price" value={money(result.salePrice)} tone="blue" />
+            <MetricCard label="Discount amount" value={money(result.discountAmount)} tone="blue" />
+            <MetricCard label="Profit before discount" value={money(result.profitBefore)} />
+            <MetricCard label="Profit after discount" value={money(result.profitAfter)} tone={resultTone} />
+            <MetricCard label="Margin before discount" value={percent(result.marginBefore)} />
+            <MetricCard label="Margin after discount" value={percent(result.marginAfter)} tone={resultTone} />
+            <MetricCard label="Profit lost per sale" value={money(result.profitLostPerSale)} tone="warning" />
+            <MetricCard label="Monthly profit lost" value={money(result.monthlyProfitLost)} tone={result.monthlyProfitLost > 0 ? "warning" : "good"} />
+            <MetricCard label="Extra sales needed" value={result.extraUnitsNeeded.toLocaleString()} helper="Extra discounted sales needed to offset lost profit" tone="warning" />
+            <MetricCard label="Maximum safe discount" value={`${result.maxSafeDiscount.toFixed(1)}%`} helper="Approximate break-even discount" tone="good" />
+          </div>
 
-              <Input
-                label="Estimated fees"
-                value={fees}
-                onChange={setFees}
-                prefix="$"
-                helper="Marketplace fees, payment processing, shipping subsidy, ads, etc."
-              />
+          <div className="mt-6 rounded-xl bg-gray-100 p-5">
+            <h3 className="font-bold text-gray-950">What this means</h3>
 
-              <div>
-                <Input
-                  label="Discount percentage"
-                  value={discount}
-                  onChange={setDiscount}
-                  suffix="%"
-                />
+            <div className="mt-3 space-y-3 text-sm leading-6 text-gray-700">
+              <p>{result.statusText}</p>
+              <p>
+                To offset your lost monthly profit of{" "}
+                <strong>{money(result.monthlyProfitLost)}</strong>, you would
+                need about{" "}
+                <strong>{result.extraUnitsNeeded.toLocaleString()}</strong>{" "}
+                extra discounted sales.
+              </p>
+              <p>
+                Your estimated break-even discount is about{" "}
+                <strong>{result.maxSafeDiscount.toFixed(1)}%</strong>.
+              </p>
+              <p>{result.recommendation}</p>
+            </div>
+          </div>
 
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {[10, 15, 20, 25, 30].map((preset) => (
-                    <button
-                      key={preset}
-                      type="button"
-                      onClick={() => setDiscount(String(preset))}
-                      className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
-                        Number(discount) === preset
-                          ? "border-blue-600 bg-blue-600 text-white"
-                          : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
-                      }`}
+          <div className="mt-6">
+            <h3 className="mb-3 text-lg font-bold text-gray-950">
+              Discount comparison
+            </h3>
+
+            <div className="overflow-hidden rounded-2xl border border-gray-300">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-3">Discount</th>
+                    <th className="px-4 py-3">Sale price</th>
+                    <th className="px-4 py-3">Profit</th>
+                    <th className="px-4 py-3">Margin</th>
+                    <th className="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y">
+                  {result.comparisonDiscounts.map((row) => (
+                    <tr
+                      key={row.rate}
+                      className={
+                        row.rate === Number(discount)
+                          ? "bg-blue-50 font-bold"
+                          : ""
+                      }
                     >
-                      {preset}%
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <Input
-                label="Expected sales volume"
-                value={monthlySales}
-                onChange={setMonthlySales}
-                helper="Use your estimated number of discounted orders."
-              />
-            </div>
-          </section>
-
-          <section className="rounded-2xl border bg-white p-5 shadow-sm">
-            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-xl font-semibold">Results</h2>
-                <p className="text-sm text-slate-500">
-                  Based on the discount and cost details entered.
-                </p>
-              </div>
-
-              <StatusBadge status={result.status} />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <ResultCard label="Sale price" value={money(result.salePrice)} />
-              <ResultCard
-                label="Discount amount"
-                value={money(result.discountAmount)}
-              />
-              <ResultCard
-                label="Profit before discount"
-                value={money(result.profitBefore)}
-              />
-              <ResultCard
-                label="Profit after discount"
-                value={money(result.profitAfter)}
-                variant={
-                  result.profitAfter <= 0
-                    ? "danger"
-                    : result.marginAfter < 20
-                    ? "warning"
-                    : "good"
-                }
-              />
-              <ResultCard
-                label="Margin before discount"
-                value={percent(result.marginBefore)}
-              />
-              <ResultCard
-                label="Margin after discount"
-                value={percent(result.marginAfter)}
-                variant={
-                  result.marginAfter < 10
-                    ? "danger"
-                    : result.marginAfter < 20
-                    ? "warning"
-                    : "good"
-                }
-              />
-              <ResultCard
-                label="Profit lost per sale"
-                value={money(result.profitLostPerSale)}
-                variant={result.profitLostPerSale > 0 ? "warning" : "good"}
-              />
-              <ResultCard
-                label="Monthly profit lost"
-                value={money(result.monthlyProfitLost)}
-                variant={result.lossSeverity}
-              />
-            </div>
-
-            <div className="mt-6 rounded-2xl bg-slate-100 p-5">
-              <h3 className="font-semibold">What this means</h3>
-
-              <p className="mt-2 text-sm leading-6 text-slate-700">
-                {result.statusText}
-              </p>
-
-              <p className="mt-3 text-sm leading-6 text-slate-700">
-                To offset the{" "}
-                <span className="font-semibold">
-                  {money(result.monthlyProfitLost)}
-                </span>{" "}
-                profit reduction from discounting{" "}
-                <span className="font-semibold">
-                  {result.sales.toLocaleString()}
-                </span>{" "}
-                orders, you would need about{" "}
-                <span className="font-semibold">
-                  {result.extraUnitsNeeded.toLocaleString()} additional
-                  discounted sales
-                </span>
-                .
-              </p>
-
-              <p className="mt-3 text-sm leading-6 text-slate-700">
-                Your estimated break-even discount is around{" "}
-                <span className="font-semibold">
-                  {percent(Math.max(0, result.maxSafeDiscount))}
-                </span>
-                . Discounts above that may make the item unprofitable.
-              </p>
-            </div>
-
-            <div className="mt-6">
-              <h3 className="mb-3 text-lg font-semibold">
-                Discount comparison
-              </h3>
-
-              <div className="overflow-hidden rounded-2xl border">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-100 text-slate-600">
-                    <tr>
-                      <th className="px-4 py-3">Discount</th>
-                      <th className="px-4 py-3">Sale price</th>
-                      <th className="px-4 py-3">Profit</th>
-                      <th className="px-4 py-3">Margin</th>
-                      <th className="px-4 py-3">Status</th>
+                      <td className="px-4 py-3">{row.rate}%</td>
+                      <td className="px-4 py-3">{money(row.salePrice)}</td>
+                      <td className="px-4 py-3">{money(row.profit)}</td>
+                      <td className="px-4 py-3">{percent(row.margin)}</td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={row.status} small />
+                      </td>
                     </tr>
-                  </thead>
-
-                  <tbody className="divide-y bg-white">
-                    {result.comparisonDiscounts.map((row) => (
-                      <tr key={row.rate}>
-                        <td className="px-4 py-3 font-semibold">
-                          {row.rate}%
-                        </td>
-                        <td className="px-4 py-3">{money(row.salePrice)}</td>
-                        <td className="px-4 py-3 font-semibold">
-                          {money(row.profit)}
-                        </td>
-                        <td className="px-4 py-3">{percent(row.margin)}</td>
-                        <td className="px-4 py-3">
-                          <StatusBadge status={row.status} small />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </section>
+          </div>
+        </section>
+      </div>
+
+      <section className="mt-10 rounded-2xl border border-gray-300 bg-white p-6">
+        <h2 className="text-2xl font-bold text-gray-950">
+          How to use this Discount Impact Calculator
+        </h2>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-4">
+          {[
+            [
+              "Enter original price",
+              "Use the normal listing price before any sale, coupon, or promotional discount.",
+            ],
+            [
+              "Add product costs",
+              "Include materials, production, packaging, shipping subsidy, and other costs tied to the sale.",
+            ],
+            [
+              "Test discount scenarios",
+              "Use preset buttons or enter your own discount to see how profit and margin change.",
+            ],
+            [
+              "Estimate sales volume",
+              "Enter the number of discounted orders you expect so monthly profit impact is realistic.",
+            ],
+          ].map(([title, text]) => (
+            <div key={title} className="rounded-xl bg-gray-50 p-4">
+              <p className="font-bold text-gray-950">{title}</p>
+              <p className="mt-3 text-sm leading-6 text-gray-600">{text}</p>
+            </div>
+          ))}
         </div>
-      </div>
+      </section>
+
+      <section className="mt-8 grid gap-8 lg:grid-cols-2">
+        <div className="rounded-2xl border border-gray-300 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Common discount mistakes
+          </h2>
+
+          <ul className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
+            {[
+              "Discounting based on competitor pricing instead of your actual profit margin.",
+              "Ignoring Etsy fees, payment processing, shipping subsidies, and ad costs during promotions.",
+              "Assuming a discount will increase volume enough to replace lost profit.",
+              "Running discounts too often and training buyers to wait for sales.",
+              "Stacking coupons, sales, free shipping, and ads without recalculating total profit.",
+            ].map((item) => (
+              <li key={item} className="flex gap-3">
+                <span className="mt-1 rounded-full bg-red-100 px-2 text-xs font-bold text-red-600">
+                  ×
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="rounded-2xl border border-gray-300 bg-white p-6">
+          <h2 className="text-2xl font-bold text-gray-950">
+            Understanding your results
+          </h2>
+
+          <div className="mt-5 space-y-4 text-sm leading-6 text-gray-600">
+            <p>
+              <strong className="text-emerald-700">Safe:</strong> The discount
+              still leaves a healthy estimated profit margin.
+            </p>
+
+            <p>
+              <strong className="text-amber-700">Moderate:</strong> The item is
+              still profitable, but the discount meaningfully reduces your
+              flexibility.
+            </p>
+
+            <p>
+              <strong className="text-orange-700">Risky:</strong> A small cost
+              increase, refund, ad cost, or extra promotion could erase most of
+              your profit.
+            </p>
+
+            <p>
+              <strong className="text-red-700">Unprofitable:</strong> The sale
+              price is too low to cover your entered costs and fees.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-gray-300 bg-blue-50 p-6">
+        <h2 className="text-2xl font-bold text-gray-950">
+          Related Etsy seller tools
+        </h2>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["/etsy/pricing-calculator", "Etsy Pricing Calculator"],
+            ["/etsy/profit-calculator", "Etsy Profit Calculator"],
+            ["/etsy/break-even-calculator", "Break-Even Calculator"],
+            ["/etsy/ad-roi-calculator", "Ad ROI Calculator"],
+          ].map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className="rounded-xl border border-blue-500 bg-white p-4 text-sm font-bold text-blue-700 hover:bg-blue-100"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+      </section>
     </main>
-  );
-}
-
-function Input({
-  label,
-  value,
-  onChange,
-  prefix,
-  suffix,
-  helper,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  prefix?: string;
-  suffix?: string;
-  helper?: string;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-sm font-medium text-slate-700">
-        {label}
-      </span>
-
-      <div className="flex overflow-hidden rounded-xl border bg-white focus-within:ring-2 focus-within:ring-blue-500">
-        {prefix && (
-          <span className="flex items-center bg-slate-100 px-3 text-slate-500">
-            {prefix}
-          </span>
-        )}
-
-        <input
-          type="number"
-          min="0"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2 outline-none"
-        />
-
-        {suffix && (
-          <span className="flex items-center bg-slate-100 px-3 text-slate-500">
-            {suffix}
-          </span>
-        )}
-      </div>
-
-      {helper && <p className="mt-1 text-xs text-slate-500">{helper}</p>}
-    </label>
-  );
-}
-
-function ResultCard({
-  label,
-  value,
-  variant = "default",
-}: {
-  label: string;
-  value: string;
-  variant?: "default" | "good" | "warning" | "danger";
-}) {
-  const styles = {
-    default: "border-slate-300 bg-slate-50",
-    good: "border-green-300 bg-green-50",
-    warning: "border-yellow-300 bg-yellow-50",
-    danger: "border-red-300 bg-red-50",
-  };
-
-  return (
-    <div className={`rounded-xl border p-4 ${styles[variant]}`}>
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold">{value}</p>
-    </div>
-  );
-}
-
-function StatusBadge({
-  status,
-  small = false,
-}: {
-  status: string;
-  small?: boolean;
-}) {
-  const styles =
-    status === "Safe"
-      ? "bg-green-100 text-green-700"
-      : status === "Moderate"
-      ? "bg-yellow-100 text-yellow-700"
-      : status === "Risky"
-      ? "bg-orange-100 text-orange-700"
-      : "bg-red-100 text-red-700";
-
-  return (
-    <span
-      className={`inline-flex w-fit items-center rounded-full font-semibold ${styles} ${
-        small ? "px-3 py-1 text-xs" : "px-4 py-2 text-sm"
-      }`}
-    >
-      {status}
-    </span>
   );
 }
