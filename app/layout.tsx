@@ -4,26 +4,25 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sellertoolsuite.com"),
+  metadataBase: new URL("https://www.sellertoolsuite.com"),
 
   title: {
-    default: "SellerToolSuite | Marketplace Seller Calculators",
+    default: "SellerToolSuite | Free Tools for Online Sellers",
     template: "%s | SellerToolSuite",
-  },
-
-  description:
-    "Free marketplace seller calculators for Etsy, eBay, Amazon, Shopify, Mercari, and more. Estimate profit, fees, pricing, margins, shipping costs, refunds, and growth targets.",
+  }, 
+    description:
+  "Free calculators and planning tools for online sellers. Estimate marketplace fees, profit margins, product pricing, shipping impact, ROI, and more across Etsy, Shopify, Amazon, eBay, Mercari, Poshmark, and Facebook Marketplace.",
 
   keywords: [
-    "etsy profit calculator",
-    "etsy fee calculator",
-    "etsy pricing calculator",
-    "seller calculator",
-    "marketplace seller tools",
-    "etsy seller tools",
-    "online seller calculator",
-    "ecommerce profit calculator",
-  ],
+  "online seller calculator",
+  "marketplace seller tools",
+  "ecommerce profit calculator",
+  "seller fee calculator",
+  "pricing calculator",
+  "profit margin calculator",
+  "marketplace calculator",
+  "online selling tools",
+],
 
   authors: [{ name: "SellerToolSuite" }],
 
@@ -31,7 +30,7 @@ export const metadata: Metadata = {
     title: "SellerToolSuite",
     description:
       "Free marketplace seller calculators and planning tools.",
-    url: "https://sellertoolsuite.com",
+    url: "https://www.sellertoolsuite.com",
     siteName: "SellerToolSuite",
     locale: "en_US",
     type: "website",
