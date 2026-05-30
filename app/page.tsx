@@ -100,7 +100,7 @@ const popularTools = [
 
 const benefits = [
   {
-    title: "60+ live seller tools",
+    title: "55+ live seller tools",
     description:
       "Practical calculators spanning pricing, profit, shipping, fees, ads, inventory, and planning.",
   },
@@ -157,7 +157,7 @@ export default function HomePage() {
         </p>
 
         <h2 className="mt-2 text-2xl font-bold text-green-950">
-          60+ live marketplace seller calculators
+          55+ live marketplace seller calculators
         </h2>
 
         <p className="mt-3 max-w-3xl leading-7 text-green-900">
