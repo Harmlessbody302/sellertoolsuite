@@ -11,8 +11,8 @@ const platforms = [
   },
   {
     name: "eBay",
-    status: "Growing",
-    count: "6 Tools",
+    status: "Full Toolkit",
+    count: "15 Tools",
     description:
       "Live calculators for eBay fees, pricing, shipping, offers, and seller profitability.",
     href: "/ebay",
@@ -100,7 +100,7 @@ const popularTools = [
 
 const benefits = [
   {
-    title: "46+ live seller tools",
+    title: "60+ live seller tools",
     description:
       "Practical calculators spanning pricing, profit, shipping, fees, ads, inventory, and planning.",
   },
@@ -157,7 +157,7 @@ export default function HomePage() {
         </p>
 
         <h2 className="mt-2 text-2xl font-bold text-green-950">
-          46+ live marketplace seller calculators
+          60+ live marketplace seller calculators
         </h2>
 
         <p className="mt-3 max-w-3xl leading-7 text-green-900">
