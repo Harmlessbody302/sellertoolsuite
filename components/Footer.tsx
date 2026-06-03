@@ -64,6 +64,9 @@ export function Footer() {
                 <Link href="/etsy/terms" className="hover:text-gray-950">
                   Terms / Disclaimer
                 </Link>
+                <Link href="/contact" className="hover:text-gray-950">
+  Contact
+</Link>
               </div>
             </div>
           </div>

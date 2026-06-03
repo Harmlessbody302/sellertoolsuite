@@ -161,7 +161,7 @@ export default function PrivacyPolicyPage() {
         </p>
 
         <p className="mt-4 text-lg font-semibold text-blue-700">
-          harmlessbody302@gmail.com
+          contact@sellertoolsuite.com
         </p>
       </section>
 

@@ -4,37 +4,107 @@ const amazonTools = [
   {
     title: "Amazon FBA Profit Calculator",
     description:
-      "Estimate Amazon FBA profit after product cost, referral fees, fulfillment fees, storage, PPC, returns, and prep costs.",
+      "Estimate Amazon FBA profit after referral fees, fulfillment fees, product cost, shipping to Amazon, storage, and other seller costs.",
     href: "/amazon/fba-profit-calculator",
+    category: "Profitability",
+  },
+  {
+    title: "Amazon FBM Profit Calculator",
+    description:
+      "Estimate Amazon FBM profit after referral fees, item cost, packaging, shipping, handling, refunds, and seller expenses.",
+    href: "/amazon/fbm-profit-calculator",
     category: "Profitability",
   },
   {
     title: "Amazon Fee Calculator",
     description:
-      "Estimate Amazon referral fees, FBA fulfillment costs, storage fees, inbound placement fees, return processing, and total fee impact.",
+      "Estimate Amazon referral fees, fulfillment fees, closing fees, storage fees, and other marketplace selling costs.",
     href: "/amazon/fee-calculator",
     category: "Fees",
   },
   {
+    title: "Amazon Referral Fee Calculator",
+    description:
+      "Estimate Amazon referral fee impact by sale price, category rate, minimum fee, and product revenue.",
+    href: "/amazon/referral-fee-calculator",
+    category: "Fees",
+  },
+  {
+    title: "Amazon Storage Fee Calculator",
+    description:
+      "Estimate monthly storage cost, long-term storage pressure, inventory value, and storage impact on product margin.",
+    href: "/amazon/storage-fee-calculator",
+    category: "Inventory",
+  },
+  {
     title: "Amazon Pricing Calculator",
     description:
-      "Find a profitable Amazon selling price based on product cost, referral fees, FBA costs, PPC, target profit, and target margin.",
+      "Find a profitable Amazon selling price based on product cost, Amazon fees, shipping, target profit, and target margin.",
     href: "/amazon/pricing-calculator",
+    category: "Pricing",
+  },
+  {
+    title: "Amazon Break-Even Calculator",
+    description:
+      "Estimate the minimum Amazon sale price needed to avoid losing money after product cost, fees, shipping, and fulfillment costs.",
+    href: "/amazon/break-even-calculator",
     category: "Pricing",
   },
   {
     title: "Amazon PPC ROI Calculator",
     description:
-      "Measure Amazon ad profitability using ACoS, TACoS, conversion rate, break-even CPC, ROI, and ad spend assumptions.",
+      "Estimate whether Amazon PPC ads are increasing profit after ad spend, product cost, Amazon fees, and conversion performance.",
     href: "/amazon/ppc-roi-calculator",
     category: "Advertising",
   },
   {
-    title: "Amazon Break-Even Calculator",
+    title: "Amazon Product Cost Calculator",
     description:
-      "Calculate the minimum Amazon sale price needed to avoid losing money after referral fees, FBA costs, PPC, returns, and prep costs.",
-    href: "/amazon/break-even-calculator",
-    category: "Pricing",
+      "Estimate true Amazon product cost after sourcing, prep, packaging, shipping, labeling, inspection, waste, and labor costs.",
+    href: "/amazon/product-cost-calculator",
+    category: "Profitability",
+  },
+  {
+    title: "Amazon Inventory Restock Calculator",
+    description:
+      "Estimate Amazon restock timing and reorder quantity using sales pace, current stock, lead time, safety stock, and profit per unit.",
+    href: "/amazon/inventory-restock-calculator",
+    category: "Inventory",
+  },
+  {
+    title: "Amazon Sales Goal Calculator",
+    description:
+      "Work backward from a monthly Amazon profit goal to estimate required orders, revenue, conversion, and traffic needs.",
+    href: "/amazon/sales-goal-calculator",
+    category: "Growth",
+  },
+  {
+    title: "Amazon Conversion Rate Calculator",
+    description:
+      "Estimate Amazon listing conversion rate, order volume, revenue, profit per session, and traffic needed to reach a sales goal.",
+    href: "/amazon/conversion-rate-calculator",
+    category: "Growth",
+  },
+  {
+    title: "Amazon Refund Impact Calculator",
+    description:
+      "Estimate how Amazon refunds, returns, replacements, damaged products, and return-related costs reduce seller profit.",
+    href: "/amazon/refund-impact-calculator",
+    category: "Profitability",
+  },
+  {
+    title: "Amazon Listing ROI Calculator",
+    description:
+      "Estimate whether Amazon listings are worth keeping, improving, advertising, restocking, discounting, or retiring.",
+    href: "/amazon/listing-roi-calculator",
+    category: "Growth",
+  },
+  {
+    title: "Amazon FBA vs FBM Calculator",
+    description:
+      "Compare Amazon FBA and FBM profit after fulfillment fees, shipping cost, labor, storage, referral fees, and seller workload.",
+    href: "/amazon/fba-vs-fbm-calculator",
+    category: "Fulfillment",
   },
 ];
 
@@ -42,22 +112,22 @@ const categories = [
   {
     title: "Profit tools",
     description:
-      "Estimate FBA profit, margin, ROI, total costs, break-even pricing, and product viability.",
+      "Estimate FBA profit, FBM profit, product cost, refund impact, listing ROI, break-even pricing, and total seller margin.",
   },
   {
     title: "Fee tools",
     description:
-      "Model Amazon referral fees, FBA fulfillment costs, storage, placement fees, returns, and total fee load.",
+      "Model Amazon referral fees, FBA fees, fulfillment costs, storage fees, closing fees, and total marketplace fee pressure.",
   },
   {
     title: "Pricing tools",
     description:
-      "Set sustainable Amazon prices using product cost, FBA costs, PPC, target profit, and margin goals.",
+      "Set sustainable Amazon prices using product cost, fees, shipping, fulfillment method, target profit, and target margin.",
   },
   {
-    title: "Advertising tools",
+    title: "Growth tools",
     description:
-      "Review PPC ROI, ACoS, TACoS, break-even CPC, conversion assumptions, and ad spend pressure.",
+      "Review PPC ROI, conversion rate, sales goals, listing ROI, inventory restock timing, and scaling decisions.",
   },
 ];
 
@@ -65,22 +135,115 @@ const workflow = [
   {
     title: "Calculate fees",
     description:
-      "Start with Amazon fees so you know how much revenue remains after referral, FBA, storage, and placement costs.",
+      "Start with referral fees, FBA or FBM fulfillment costs, storage fees, and other Amazon seller charges.",
   },
   {
     title: "Estimate profit",
     description:
-      "Subtract product cost, inbound shipping, prep, storage, PPC, returns, and Amazon fees.",
+      "Subtract product cost, shipping, packaging, prep, PPC, refunds, labor, storage, and other expenses.",
   },
   {
     title: "Set pricing",
     description:
-      "Use pricing and break-even tools to find a sale price that can support profit and competition.",
+      "Use target profit and margin goals to choose a price that can survive fees, ads, returns, and fulfillment costs.",
   },
   {
-    title: "Review ads",
+    title: "Review growth",
     description:
-      "Check PPC ROI, ACoS, TACoS, conversion rate, and break-even CPC before scaling campaigns.",
+      "Check conversion, PPC ROI, sales goals, listing ROI, and restock timing before scaling inventory or ad spend.",
+  },
+];
+
+const amazonGuides = [
+  {
+    title: "How Amazon Fees Work",
+    description:
+      "Learn the main Amazon fees sellers should understand before pricing products, using FBA, running PPC, or scaling inventory.",
+    href: "/amazon/how-amazon-fees-work",
+  },
+  {
+    title: "How to Price Amazon Products",
+    description:
+      "Review a practical Amazon pricing process for covering product cost, referral fees, fulfillment costs, PPC, returns, and target profit.",
+    href: "/amazon/how-to-price-amazon-products",
+  },
+  {
+    title: "Amazon Profit Margin Guide",
+    description:
+      "Understand Amazon profit margin, healthy margin ranges, and what can reduce seller profit after fees, fulfillment, PPC, and returns.",
+    href: "/amazon/profit-margin-guide",
+  },
+  {
+    title: "Amazon Seller Cost Checklist",
+    description:
+      "Use a practical checklist to avoid missing Amazon seller costs that reduce product profitability.",
+    href: "/amazon/seller-cost-checklist",
+  },
+  {
+    title: "Amazon FBA Cost Guide",
+    description:
+      "Learn how FBA fees, inbound shipping, storage, prep, returns, and fulfillment costs affect Amazon seller profit.",
+    href: "/amazon/fba-cost-guide",
+  },
+  {
+    title: "Amazon FBM Shipping Cost Guide",
+    description:
+      "Estimate FBM shipping costs, packaging, handling time, return shipping, delivery expectations, and margin impact.",
+    href: "/amazon/fbm-shipping-cost-guide",
+  },
+  {
+    title: "Amazon PPC Fees Explained",
+    description:
+      "Understand how Amazon PPC ad spend can affect profit, pricing, conversion, ACOS, TACOS, and seller margin.",
+    href: "/amazon/ppc-fees-explained",
+  },
+  {
+    title: "Amazon Discount Strategy Guide",
+    description:
+      "Learn how coupons, deals, promotions, price cuts, and Amazon discounts affect profit after fees, fulfillment, product cost, and ads.",
+    href: "/amazon/discount-strategy-guide",
+  },
+  {
+    title: "Amazon Refunds and Returns Cost Guide",
+    description:
+      "Understand how Amazon refunds, returns, replacements, damaged products, and return-related costs can reduce seller profit.",
+    href: "/amazon/refunds-and-returns-cost-guide",
+  },
+  {
+    title: "Amazon Listing ROI Guide",
+    description:
+      "Learn how to decide whether Amazon listings are worth keeping, improving, advertising, restocking, discounting, or retiring.",
+    href: "/amazon/listing-roi-guide",
+  },
+  {
+    title: "Amazon Conversion Rate Guide",
+    description:
+      "Learn how Amazon sessions, orders, conversion rate, traffic quality, pricing, reviews, images, and listing quality affect profitable growth.",
+    href: "/amazon/conversion-rate-guide",
+  },
+  {
+    title: "Amazon Inventory Restock Guide",
+    description:
+      "Learn how to plan Amazon restocks using sales pace, current stock, lead time, reorder point, safety stock, and listing profitability.",
+    href: "/amazon/inventory-restock-guide",
+  },
+  {
+    title: "Amazon Sales Goal Planning Guide",
+    description:
+      "Learn how to plan Amazon sales goals using average order value, profit per order, conversion rate, traffic needs, and fulfillment capacity.",
+    href: "/amazon/sales-goal-planning-guide",
+  },
+  {
+    title: "Amazon FBA vs FBM Guide",
+    description:
+      "Compare FBA and FBM using fulfillment costs, shipping control, storage fees, labor, customer expectations, and profit margin.",
+    href: "/amazon/fba-vs-fbm-guide",
+  },
+  {
+    title: "Amazon Seller Resources",
+    description:
+      "Browse useful planning resources, seller tools, and future recommendations for Amazon pricing, fees, fulfillment, PPC, inventory, and operations.",
+    href: "/amazon/seller-resources",
   },
 ];
 
@@ -97,10 +260,10 @@ export default function AmazonPage() {
         </h1>
 
         <p className="mt-4 text-lg leading-8 text-gray-600">
-          Free Amazon calculators for FBA profit, fees, pricing, PPC ROI, and
-          break-even planning. Use these tools to estimate product costs,
-          fulfillment fees, advertising performance, and seller margins before
-          sourcing or scaling products.
+          Free Amazon calculators for FBA profit, FBM profit, fees, pricing,
+          PPC ROI, inventory, conversion, refunds, product cost, and sales goal
+          planning. Use these tools to estimate seller costs before pricing,
+          advertising, restocking, or scaling Amazon products.
         </p>
       </section>
 
@@ -110,13 +273,14 @@ export default function AmazonPage() {
         </p>
 
         <h2 className="mt-2 text-2xl font-bold text-green-950">
-          5 active Amazon calculators
+          15 active Amazon calculators
         </h2>
 
         <p className="mt-3 max-w-3xl leading-7 text-green-900">
-          Use this Amazon seller toolkit to estimate referral fees, FBA costs,
-          product profitability, PPC performance, break-even prices, and
-          recommended pricing for Amazon marketplace products.
+          Use this Amazon seller toolkit to estimate referral fees, FBA fees,
+          FBM shipping, PPC impact, break-even prices, profit margins, product
+          cost, refund losses, inventory timing, and pricing scenarios for
+          marketplace listings.
         </p>
       </section>
 
@@ -182,10 +346,10 @@ export default function AmazonPage() {
         </h2>
 
         <p className="mt-3 max-w-3xl leading-7 text-gray-700">
-          Use the calculators together to move from fee estimates to product
-          profit, pricing, break-even analysis, and PPC decisions. This helps
-          prevent products from looking profitable before FBA costs, ads,
-          storage, returns, and product cost are fully included.
+          Use the calculators together to move from fee estimates to final
+          pricing and growth decisions. This helps prevent products from looking
+          profitable before fulfillment fees, referral fees, PPC, product cost,
+          shipping, storage, refunds, and inventory risk are fully included.
         </p>
 
         <div className="mt-6 grid gap-5 md:grid-cols-4">
@@ -201,6 +365,40 @@ export default function AmazonPage() {
         </div>
       </section>
 
+      <section className="mt-8 rounded-2xl border border-blue-300 bg-blue-50 p-6">
+        <h2 className="text-2xl font-bold text-gray-950">
+          Amazon seller education hub
+        </h2>
+
+        <p className="mt-3 max-w-3xl leading-7 text-gray-700">
+          Learn how Amazon fees, pricing, profit margins, FBA, FBM, PPC,
+          refunds, inventory, conversion, and product cost decisions affect
+          long-term seller profitability.
+        </p>
+
+        <div className="mt-6 grid gap-5 md:grid-cols-2">
+          {amazonGuides.map((guide) => (
+            <Link
+              key={guide.href}
+              href={guide.href}
+              className="rounded-2xl border border-blue-300 bg-white p-6 transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <h3 className="text-lg font-bold text-gray-950">
+                {guide.title}
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-gray-600">
+                {guide.description}
+              </p>
+
+              <p className="mt-5 text-sm font-bold text-blue-700">
+                Open guide →
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-8 grid gap-8 lg:grid-cols-2">
         <div className="rounded-2xl border border-gray-300 bg-white p-6">
           <h2 className="text-2xl font-bold text-gray-950">
@@ -209,12 +407,12 @@ export default function AmazonPage() {
 
           <ul className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
             {[
-              "Referral fees, FBA fulfillment fees, storage costs, and placement fees.",
-              "Product cost, inbound shipping, prep costs, packaging, and landed cost.",
-              "PPC cost per sale, ACoS, TACoS, break-even CPC, and campaign ROI.",
-              "Returns allowance, refunds, damaged inventory, and replacement risk.",
-              "Break-even price before profit starts.",
-              "Profit margin after all Amazon fees and seller costs are included.",
+              "Referral fees, fulfillment fees, storage fees, closing fees, and other Amazon charges.",
+              "FBA vs FBM fulfillment cost, shipping cost, packaging cost, prep cost, and labor.",
+              "Product sourcing cost, inbound shipping, labeling, inspection, waste, and supplies.",
+              "PPC cost, ACOS, conversion rate, listing traffic, and ad-driven profit impact.",
+              "Refunds, returns, damaged units, replacements, and customer issue costs.",
+              "Profit margin after all entered costs, ads, inventory risk, and fulfillment costs are included.",
             ].map((item) => (
               <li key={item} className="flex gap-3">
                 <span className="mt-1 rounded-full bg-blue-100 px-2 text-xs font-bold text-blue-700">
@@ -233,12 +431,12 @@ export default function AmazonPage() {
 
           <ul className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
             {[
-              "Treating revenue after Amazon fees as profit before product cost and PPC.",
-              "Forgetting inbound shipping, prep, storage, placement, and return costs.",
-              "Using a generic referral fee rate without checking the product category.",
-              "Scaling PPC before checking break-even CPC and product margin.",
-              "Pricing products without enough room for coupons, returns, and competition.",
-              "Sourcing inventory before calculating realistic FBA profit and break-even price.",
+              "Treating sale revenue as profit before Amazon fees and fulfillment costs.",
+              "Ignoring FBA storage fees, inbound shipping, prep, packaging, and product cost.",
+              "Running PPC before checking whether the product has enough margin.",
+              "Pricing from competitor listings without checking referral fees, FBA fees, and refund risk.",
+              "Restocking products before reviewing conversion, margin, refunds, and sales velocity.",
+              "Comparing FBA and FBM without accounting for labor, shipping control, storage, and customer expectations.",
             ].map((item) => (
               <li key={item} className="flex gap-3">
                 <span className="mt-1 rounded-full bg-red-100 px-2 text-xs font-bold text-red-600">
@@ -260,19 +458,19 @@ export default function AmazonPage() {
           {[
             [
               "Start with fees",
-              "Use the fee calculator to estimate referral fees, FBA costs, storage, and other Amazon charges.",
+              "Use the fee calculator to estimate referral fees, FBA fees, FBM costs, storage, and other Amazon charges.",
             ],
             [
               "Check profit",
-              "Use the FBA profit calculator to subtract product cost, inbound shipping, PPC, returns, and fees.",
+              "Use profit calculators to subtract product cost, shipping, packaging, fulfillment, PPC, refunds, and labor.",
             ],
             [
               "Set price",
-              "Use the pricing and break-even calculators to find viable prices before sourcing or scaling.",
+              "Use pricing and break-even calculators to find safe sale prices and minimum acceptable margins.",
             ],
             [
-              "Review PPC",
-              "Use the PPC ROI calculator to compare ACoS, TACoS, break-even CPC, ad ROI, and scaling scenarios.",
+              "Review growth",
+              "Use PPC ROI, conversion, sales goal, listing ROI, inventory, and FBA vs FBM tools before scaling.",
             ],
           ].map(([title, text]) => (
             <div key={title} className="rounded-xl bg-gray-50 p-4">
@@ -286,9 +484,9 @@ export default function AmazonPage() {
       <section className="mt-8 rounded-2xl border border-amber-300 bg-amber-50 p-5">
         <p className="text-sm leading-6 text-amber-900">
           SellerToolSuite calculators provide planning estimates only. Actual
-          Amazon referral fees, FBA fees, placement fees, storage costs, PPC
-          performance, returns, taxes, category rates, and marketplace rules may
-          vary.
+          Amazon fees, FBA fees, referral rates, storage costs, PPC results,
+          fulfillment costs, shipping costs, refunds, taxes, and marketplace
+          rules may vary.
         </p>
       </section>
     </main>
