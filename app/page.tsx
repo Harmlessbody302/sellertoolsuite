@@ -27,8 +27,8 @@ const platforms = [
   },
   {
     name: "Shopify",
-    status: "Growing",
-    count: "5 Tools",
+    status: "Full Toolkit",
+    count: "15 Tools",
     description:
       "Live tools for Shopify store pricing, fees, ad performance, conversion planning, and overall store profitability.",
     href: "/shopify",
