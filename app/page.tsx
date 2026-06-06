@@ -35,24 +35,24 @@ const platforms = [
   },
   {
     name: "Mercari",
-    status: "Growing",
-    count: "5 Tools",
+    status: "Full Toolkit",
+    count: "15 Tools",
     description:
       "Live resale calculators for Mercari pricing, fees, shipping, and seller profit planning.",
     href: "/mercari",
   },
   {
     name: "Poshmark",
-    status: "Growing",
-    count: "5 Tools",
+    status: "Full Toolkit",
+    count: "15 Tools",
     description:
       "Live seller tools for closet pricing, bundles, offers, shipping, and resale margin planning.",
     href: "/poshmark",
   },
   {
     name: "Facebook Marketplace",
-    status: "Growing",
-    count: "5 Tools",
+    status: "Full Toolkit",
+    count: "15 Tools",
     description:
       "Live local resale calculators for pricing, negotiation, shipping, and inventory planning.",
     href: "/facebook-marketplace",
