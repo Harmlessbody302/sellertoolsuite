@@ -1,300 +1,470 @@
-import Link from "next/link";
-
-const facebookMarketplaceTools = [
+const calculatorCards = [
   {
     title: "Facebook Marketplace Profit Calculator",
-    description:
-      "Estimate profit from local pickup, delivery, or shipped Facebook Marketplace sales after item cost, packaging, fuel, delivery, fees, and other selling expenses.",
     href: "/facebook-marketplace/profit-calculator",
-    category: "Profitability",
+    tag: "Profit",
+    text: "Estimate profit after item cost, packaging, shipping, local delivery, meet-up costs, discounts, and seller expenses.",
   },
   {
     title: "Facebook Marketplace Pricing Calculator",
-    description:
-      "Find a profitable listing price based on item cost, target profit, buyer negotiation, delivery costs, platform fees, and resale margin goals.",
     href: "/facebook-marketplace/pricing-calculator",
-    category: "Pricing",
+    tag: "Pricing",
+    text: "Find a profitable listing price based on item cost, target profit, negotiation room, delivery costs, and local sold comps.",
   },
   {
     title: "Facebook Marketplace Break-Even Calculator",
-    description:
-      "Calculate the minimum listing price needed to avoid losing money after item cost, delivery, shipping, packaging, negotiation, fees, and other expenses.",
     href: "/facebook-marketplace/break-even-calculator",
-    category: "Pricing",
-  },
-  {
-    title: "Facebook Marketplace Negotiation Calculator",
-    description:
-      "Estimate how buyer offers, negotiation discounts, counteroffers, and accepted prices affect profit, margin, and your minimum acceptable price.",
-    href: "/facebook-marketplace/negotiation-calculator",
-    category: "Negotiation",
+    tag: "Break-even",
+    text: "Calculate the minimum price needed to avoid losing money after costs, discounts, delivery, packaging, and time value.",
   },
   {
     title: "Facebook Marketplace Shipping Profit Calculator",
-    description:
-      "Compare local pickup, local delivery, and shipped orders to see how fulfillment choices affect profit, margin, shipping coverage, and seller time.",
     href: "/facebook-marketplace/shipping-profit-calculator",
-    category: "Fulfillment",
+    tag: "Shipping",
+    text: "Estimate profit on shipped Facebook Marketplace orders after item cost, postage, packaging, and selling expenses.",
+  },
+  {
+    title: "Facebook Marketplace Negotiation Calculator",
+    href: "/facebook-marketplace/negotiation-calculator",
+    tag: "Offers",
+    text: "Compare buyer offers, counteroffers, lowest acceptable price, negotiation room, and final profit before accepting.",
+  },
+  {
+    title: "Facebook Marketplace Product Cost Calculator",
+    href: "/facebook-marketplace/product-cost-calculator",
+    tag: "Costs",
+    text: "Estimate total product cost after purchase cost, sourcing, cleaning, repair, packaging, storage, and listing preparation.",
+  },
+  {
+    title: "Facebook Marketplace Local Delivery Cost Calculator",
+    href: "/facebook-marketplace/local-delivery-cost-calculator",
+    tag: "Delivery",
+    text: "Estimate local delivery cost using mileage, fuel, time, delivery fee, item profit, and whether delivery is worth offering.",
+  },
+  {
+    title: "Facebook Marketplace Bundle Pricing Calculator",
+    href: "/facebook-marketplace/bundle-pricing-calculator",
+    tag: "Bundles",
+    text: "Calculate bundle price, bundle discount, combined item cost, pickup or delivery cost, and final bundle profit.",
+  },
+  {
+    title: "Facebook Marketplace Offer ROI Calculator",
+    href: "/facebook-marketplace/offer-roi-calculator",
+    tag: "Offers",
+    text: "Estimate whether accepting lower offers or running discounts creates enough extra sales to protect total profit.",
+  },
+  {
+    title: "Facebook Marketplace Refund Impact Calculator",
+    href: "/facebook-marketplace/refund-impact-calculator",
+    tag: "Refunds",
+    text: "Estimate how refunds, returns, damaged items, no-shows, disputes, and recovered value affect Facebook Marketplace profit.",
+  },
+  {
+    title: "Facebook Marketplace Listing ROI Calculator",
+    href: "/facebook-marketplace/listing-roi-calculator",
+    tag: "ROI",
+    text: "Estimate whether a listing is worth improving, renewing, discounting, bundling, boosting, or removing.",
+  },
+  {
+    title: "Facebook Marketplace Inventory Restock Calculator",
+    href: "/facebook-marketplace/inventory-restock-calculator",
+    tag: "Inventory",
+    text: "Plan sourcing and restock decisions around active listings, monthly sales, sell-through rate, item cost, and storage pressure.",
+  },
+  {
+    title: "Facebook Marketplace Sales Goal Calculator",
+    href: "/facebook-marketplace/sales-goal-calculator",
+    tag: "Goals",
+    text: "Work backward from a monthly profit goal to estimate required sales, listings, average sale price, and sourcing needs.",
+  },
+  {
+    title: "Facebook Marketplace Sell-Through Rate Calculator",
+    href: "/facebook-marketplace/sell-through-rate-calculator",
+    tag: "Velocity",
+    text: "Calculate sell-through rate, monthly sales velocity, stale inventory value, listing needs, and sourcing pace.",
+  },
+  {
+    title: "Facebook Marketplace Promotion ROI Calculator",
+    href: "/facebook-marketplace/promotion-roi-calculator",
+    tag: "Growth",
+    text: "Estimate whether boosting, reposting, discounting, or increasing listing activity creates enough extra sales to justify the effort.",
   },
 ];
 
-const categories = [
+const toolCategories = [
   {
     title: "Profit tools",
-    description:
-      "Estimate Facebook Marketplace profit, margin, ROI, total costs, local sale viability, and fulfillment impact.",
+    text: "Estimate Facebook Marketplace profit, break-even price, total item cost, refund risk, and listing ROI.",
   },
   {
     title: "Pricing tools",
-    description:
-      "Set sustainable listing prices using item cost, delivery cost, shipping, buyer negotiation, target profit, and margin goals.",
+    text: "Set prices with room for buyer negotiation, bundle discounts, delivery costs, and realistic local buyer demand.",
   },
   {
-    title: "Negotiation tools",
-    description:
-      "Review buyer offer room, accepted prices, counteroffers, discount pressure, and minimum profitable sale prices.",
+    title: "Local selling tools",
+    text: "Review pickup, delivery, shipping, meet-up time, no-shows, buyer messages, and local fulfillment costs.",
   },
   {
-    title: "Fulfillment tools",
-    description:
-      "Compare local pickup, local delivery, shipped orders, packaging, fuel cost, shipping charges, and seller time.",
+    title: "Growth tools",
+    text: "Measure sell-through, restocks, sales goals, promotion ROI, listing performance, and whether more inventory is worth sourcing.",
   },
 ];
 
 const workflow = [
   {
     title: "Calculate costs",
-    description:
-      "Start with item cost, shipping, packaging, delivery, fuel, platform fees, and other expenses so your sale price is grounded.",
+    text: "Start with item cost, sourcing cost, cleaning, repair, packaging, shipping, delivery, and time-related expenses.",
   },
   {
-    title: "Estimate profit",
-    description:
-      "Use the profit calculator to see how much money remains after item cost, fulfillment costs, fees, and selling expenses.",
+    title: "Set price",
+    text: "Use pricing and break-even tools to set a listing price that supports negotiation without dropping below profit goals.",
   },
   {
-    title: "Set pricing",
-    description:
-      "Use pricing and break-even tools to find a listing price that supports profit, buyer negotiation, and realistic local demand.",
+    title: "Review offers",
+    text: "Compare buyer offers, counteroffers, delivery requests, pickup delays, and bundle discounts before accepting.",
   },
   {
-    title: "Review fulfillment",
-    description:
-      "Compare pickup, delivery, and shipped-order scenarios before offering delivery, charging shipping, or accepting buyer offers.",
+    title: "Track velocity",
+    text: "Use sell-through, listing ROI, restock, and sales goal tools to decide whether to source more or clear stale inventory.",
   },
 ];
 
-export default function FacebookMarketplacePage() {
+const educationCards = [
+  {
+    title: "How Facebook Marketplace Fees Work",
+    href: "/facebook-marketplace/how-facebook-marketplace-fees-work",
+    text: "Understand Facebook Marketplace fees, local sale costs, shipping costs, payment issues, delivery expenses, and hidden seller costs.",
+  },
+  {
+    title: "How to Price Facebook Marketplace Items",
+    href: "/facebook-marketplace/how-to-price-facebook-marketplace-items",
+    text: "Learn how to price local and shipped items around item cost, negotiation room, sold comps, delivery, shipping, and target profit.",
+  },
+  {
+    title: "Facebook Marketplace Profit Margin Guide",
+    href: "/facebook-marketplace/profit-margin-guide",
+    text: "Review gross profit, net profit, margin, offer-adjusted margin, delivery-adjusted margin, and local selling costs.",
+  },
+  {
+    title: "Facebook Marketplace Seller Cost Checklist",
+    href: "/facebook-marketplace/seller-cost-checklist",
+    text: "Use a checklist of item costs, packaging, shipping, delivery, repair, storage, no-show, refund, and selling costs.",
+  },
+  {
+    title: "Facebook Marketplace Shipping Cost Guide",
+    href: "/facebook-marketplace/shipping-cost-guide",
+    text: "Understand postage, packaging, shipping materials, shipped order profit, and when shipping is worth offering.",
+  },
+  {
+    title: "Facebook Marketplace Local Delivery Guide",
+    href: "/facebook-marketplace/local-delivery-guide",
+    text: "Review mileage, fuel, time, delivery fee, buyer distance, safe drop-off planning, and whether local delivery protects profit.",
+  },
+  {
+    title: "Facebook Marketplace Negotiation Strategy Guide",
+    href: "/facebook-marketplace/negotiation-strategy-guide",
+    text: "Plan buyer offers, counteroffers, lowest acceptable price, bundle negotiation, pickup timing, and profit floors.",
+  },
+  {
+    title: "Facebook Marketplace Refunds and Returns Cost Guide",
+    href: "/facebook-marketplace/refunds-and-returns-cost-guide",
+    text: "Understand refunds, returns, damaged items, disputes, no-shows, recovered value, and customer issue costs.",
+  },
+  {
+    title: "Facebook Marketplace Listing ROI Guide",
+    href: "/facebook-marketplace/listing-roi-guide",
+    text: "Review when to improve, renew, repost, promote, discount, bundle, or remove a Facebook Marketplace listing.",
+  },
+  {
+    title: "Facebook Marketplace Inventory Restock Guide",
+    href: "/facebook-marketplace/inventory-restock-guide",
+    text: "Plan sourcing and restocks around sell-through rate, active listings, stale inventory, storage, and local buyer demand.",
+  },
+  {
+    title: "Facebook Marketplace Sales Goal Planning Guide",
+    href: "/facebook-marketplace/sales-goal-planning-guide",
+    text: "Work backward from revenue or profit goals to estimate required sales, listings, average sale price, and sourcing pace.",
+  },
+  {
+    title: "Facebook Marketplace Bundle Pricing Guide",
+    href: "/facebook-marketplace/bundle-pricing-guide",
+    text: "Understand bundle discounts, combined item cost, local pickup value, delivery pressure, and bundle profit.",
+  },
+  {
+    title: "Facebook Marketplace Sell-Through Rate Guide",
+    href: "/facebook-marketplace/sell-through-rate-guide",
+    text: "Learn how sell-through rate affects sourcing, stale listings, pricing, reposting, and inventory decisions.",
+  },
+  {
+    title: "Facebook Marketplace Local Pickup Safety Guide",
+    href: "/facebook-marketplace/local-pickup-safety-guide",
+    text: "Review safe public meetups, cash handling, pickup scheduling, porch pickup caution, buyer screening, and local selling boundaries.",
+  },
+  {
+    title: "Facebook Marketplace Seller Resources",
+    href: "/facebook-marketplace/seller-resources",
+    text: "Browse Facebook Marketplace calculators, guides, planning tools, seller resources, and future software recommendations.",
+  },
+];
+
+const estimateList = [
+  "Item cost, sourcing cost, cleaning cost, repair cost, and preparation cost.",
+  "Packaging supplies, shipping supplies, local delivery cost, mileage, and fuel.",
+  "Buyer negotiation room, lowest acceptable price, counteroffers, and bundle discounts.",
+  "No-show risk, pickup delays, message time, delivery time, and transaction friction.",
+  "Refund, return, damaged item, dispute, and recovered value assumptions.",
+  "Break-even price and minimum sale price before accepting local offers.",
+];
+
+const mistakeList = [
+  "Treating the listing price as profit before subtracting item cost and delivery costs.",
+  "Accepting local offers without checking the lowest acceptable price.",
+  "Offering delivery without charging enough for mileage, fuel, time, and inconvenience.",
+  "Pricing from active listings instead of realistic local sold comps and demand.",
+  "Letting slow-moving items take up space without relisting, bundling, or discounting.",
+  "Ignoring buyer no-shows, message time, pickup delays, and local transaction friction.",
+];
+
+const useSteps = [
+  {
+    title: "Start with item cost",
+    text: "Use product cost tools to estimate purchase cost, repairs, cleaning, prep, storage, and packaging.",
+  },
+  {
+    title: "Set price floor",
+    text: "Use pricing and break-even tools to find your minimum acceptable sale price.",
+  },
+  {
+    title: "Review negotiation",
+    text: "Use offer and negotiation calculators before accepting buyer offers or bundle requests.",
+  },
+  {
+    title: "Track performance",
+    text: "Use sell-through, sales goal, listing ROI, and restock tools to decide what to list next.",
+  },
+];
+
+export default function FacebookMarketplaceHubPage() {
   return (
-    <main className="mx-auto max-w-6xl px-6 py-12">
-      <section className="max-w-3xl">
-        <p className="text-sm font-bold uppercase tracking-wide text-blue-700">
+    <main className="min-h-screen bg-slate-50 text-slate-950">
+      <section className="mx-auto max-w-6xl px-4 py-10">
+        <p className="text-xs font-bold uppercase tracking-wide text-blue-700">
           Facebook Marketplace Seller Tools
         </p>
 
-        <h1 className="mt-3 text-4xl font-bold tracking-tight text-gray-950">
+        <h1 className="mt-2 text-3xl font-bold tracking-tight">
           Facebook Marketplace Seller Calculators
         </h1>
 
-        <p className="mt-4 text-lg leading-8 text-gray-600">
-          Free Facebook Marketplace calculators for profit, pricing,
-          negotiation, shipping, local delivery, and break-even planning. Use
-          these tools to estimate item costs, buyer offers, delivery impact,
-          shipping charges, fulfillment costs, and seller margins before
-          listing, pricing, shipping, or accepting offers.
-        </p>
-      </section>
-
-      <section className="mt-10 rounded-2xl border border-green-300 bg-green-50 p-6">
-        <p className="text-sm font-bold uppercase tracking-wide text-green-800">
-          Live Facebook Marketplace toolkit
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+          Free Facebook Marketplace calculators for profit, pricing, break-even
+          planning, shipping profit, negotiation, local delivery, product cost,
+          refunds, listing ROI, inventory, bundles, sell-through, promotions,
+          and sales goals. Use these tools to estimate costs, profit, buyer offer
+          room, delivery pressure, and local selling performance before listing
+          or accepting offers.
         </p>
 
-        <h2 className="mt-2 text-2xl font-bold text-green-950">
-          5 active Facebook Marketplace calculators
-        </h2>
+        <section className="mt-8 rounded-xl border border-green-300 bg-green-50 p-5">
+          <p className="text-xs font-bold uppercase tracking-wide text-green-800">
+            Live Facebook Marketplace Toolkit
+          </p>
+          <h2 className="mt-2 text-xl font-bold">
+            15 Facebook Marketplace calculators
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-green-900">
+            Use this seller toolkit to estimate profit, local delivery cost,
+            shipping profit, negotiation room, bundle pricing, refund impact,
+            restock needs, promotion ROI, sell-through rate, and sales goals for
+            Facebook Marketplace sellers.
+          </p>
+        </section>
 
-        <p className="mt-3 max-w-3xl leading-7 text-green-900">
-          Use this Facebook Marketplace seller toolkit to estimate resale
-          profit, listing prices, break-even thresholds, buyer negotiation room,
-          shipping profitability, local delivery cost, and fulfillment impact
-          for local and shipped sales.
-        </p>
-      </section>
+        <section className="mt-8 rounded-xl border bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-bold">
+            Facebook Marketplace calculator suite
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Choose a calculator below to estimate the major financial and
+            operational variables that affect Facebook Marketplace seller profit.
+          </p>
 
-      <section className="mt-10 rounded-2xl border border-gray-300 bg-white p-6">
-        <h2 className="text-2xl font-bold text-gray-950">
-          Facebook Marketplace calculator suite
-        </h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {calculatorCards.map((card) => (
+              <ToolCard key={card.href} {...card} />
+            ))}
+          </div>
+        </section>
 
-        <p className="mt-3 max-w-3xl leading-7 text-gray-600">
-          Choose a calculator below to estimate the major financial variables
-          that affect Facebook Marketplace seller profitability.
-        </p>
-
-        <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {facebookMarketplaceTools.map((tool) => (
-            <Link
-              key={tool.href}
-              href={tool.href}
-              className="rounded-2xl border border-gray-300 bg-white p-6 transition hover:-translate-y-1 hover:shadow-md"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-lg font-bold text-gray-950">
-                  {tool.title}
-                </h3>
-
-                <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">
-                  {tool.category}
-                </span>
-              </div>
-
-              <p className="mt-4 text-sm leading-6 text-gray-600">
-                {tool.description}
-              </p>
-
-              <p className="mt-5 text-sm font-bold text-blue-700">
-                Open tool →
-              </p>
-            </Link>
+        <div className="mt-8 grid gap-6 md:grid-cols-4">
+          {toolCategories.map((card) => (
+            <MiniCard key={card.title} title={card.title} text={card.text} />
           ))}
         </div>
-      </section>
 
-      <section className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-        {categories.map((category) => (
-          <div
-            key={category.title}
-            className="rounded-2xl border border-gray-300 bg-white p-5"
-          >
-            <h2 className="text-lg font-bold text-gray-950">
-              {category.title}
+        <section className="mt-8 rounded-xl border border-blue-200 bg-blue-50 p-5">
+          <h2 className="text-xl font-bold">
+            Recommended Facebook Marketplace seller workflow
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-700">
+            Use the calculators together to move from cost estimates to real
+            local sale profit, pricing decisions, negotiation decisions, and
+            inventory planning. This helps prevent listings from looking
+            profitable before item cost, delivery time, shipping supplies, pickup
+            friction, and buyer offers are included.
+          </p>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-4">
+            {workflow.map((step) => (
+              <MiniCard key={step.title} title={step.title} text={step.text} />
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-xl border border-blue-200 bg-blue-50 p-5">
+          <h2 className="text-xl font-bold">
+            Facebook Marketplace seller education hub
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-700">
+            Learn how Facebook Marketplace costs, pricing, negotiation, shipping,
+            local delivery, refunds, listing ROI, restocks, bundles,
+            sell-through, safety, and sales goals affect seller profit.
+          </p>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            {educationCards.map((card) => (
+              <GuideCard key={card.href} {...card} />
+            ))}
+          </div>
+        </section>
+
+        <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <section className="rounded-xl border bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-bold">
+              What Facebook Marketplace sellers should estimate
             </h2>
 
-            <p className="mt-3 text-sm leading-6 text-gray-600">
-              {category.description}
-            </p>
+            <div className="mt-5 space-y-3">
+              {estimateList.map((item) => (
+                <Check key={item} text={item} />
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-xl border bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-bold">
+              Common Facebook Marketplace seller mistakes
+            </h2>
+
+            <div className="mt-5 space-y-4">
+              {mistakeList.map((item) => (
+                <XItem key={item} text={item} />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <section className="mt-8 rounded-xl border bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-bold">
+            How to use these Facebook Marketplace calculators
+          </h2>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-4">
+            {useSteps.map((step) => (
+              <MiniCard key={step.title} title={step.title} text={step.text} />
+            ))}
           </div>
-        ))}
-      </section>
+        </section>
 
-      <section className="mt-8 rounded-2xl border border-blue-300 bg-blue-50 p-6">
-        <h2 className="text-2xl font-bold text-gray-950">
-          Recommended Facebook Marketplace seller workflow
-        </h2>
-
-        <p className="mt-3 max-w-3xl leading-7 text-gray-700">
-          Use the calculators together to move from cost estimates to real
-          resale profit, pricing decisions, negotiation limits, break-even
-          analysis, and fulfillment choices. This helps prevent listings from
-          looking profitable before item cost, delivery, fuel, shipping,
-          packaging, fees, buyer offers, and seller time are fully included.
-        </p>
-
-        <div className="mt-6 grid gap-5 md:grid-cols-4">
-          {workflow.map((step) => (
-            <div key={step.title} className="rounded-xl bg-white p-4">
-              <h3 className="font-bold text-gray-950">{step.title}</h3>
-
-              <p className="mt-3 text-sm leading-6 text-gray-600">
-                {step.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8 grid gap-8 lg:grid-cols-2">
-        <div className="rounded-2xl border border-gray-300 bg-white p-6">
-          <h2 className="text-2xl font-bold text-gray-950">
-            What Facebook Marketplace sellers should estimate
-          </h2>
-
-          <ul className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
-            {[
-              "Item cost, sourcing cost, repair cost, cleaning cost, prep cost, and supplies.",
-              "Shipping cost, delivery cost, fuel cost, packaging, pickup effort, and seller time.",
-              "Buyer negotiation discount, counteroffer room, and minimum acceptable offer.",
-              "Marketplace fee, checkout fee, shipping fee, or payment processing cost when applicable.",
-              "Break-even sale price before accepting low offers or offering delivery.",
-              "Profit margin after all local sale, shipping, fulfillment, and seller costs are included.",
-            ].map((item) => (
-              <li key={item} className="flex gap-3">
-                <span className="mt-1 rounded-full bg-blue-100 px-2 text-xs font-bold text-blue-700">
-                  ✓
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="rounded-2xl border border-gray-300 bg-white p-6">
-          <h2 className="text-2xl font-bold text-gray-950">
-            Common Facebook Marketplace seller mistakes
-          </h2>
-
-          <ul className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
-            {[
-              "Treating listing price as profit before subtracting item cost and fulfillment costs.",
-              "Forgetting that buyers often negotiate below the listed price.",
-              "Offering delivery without pricing fuel, distance, time, or pickup effort.",
-              "Charging less for shipping than the actual label, postage, packaging, and handling cost.",
-              "Ignoring checkout, shipping, marketplace, or payment processing fees when they apply.",
-              "Comparing only active listings instead of realistic local sold prices and buyer demand.",
-            ].map((item) => (
-              <li key={item} className="flex gap-3">
-                <span className="mt-1 rounded-full bg-red-100 px-2 text-xs font-bold text-red-600">
-                  ×
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="mt-8 rounded-2xl border border-gray-300 bg-white p-6">
-        <h2 className="text-2xl font-bold text-gray-950">
-          How to use these Facebook Marketplace calculators
-        </h2>
-
-        <div className="mt-6 grid gap-5 md:grid-cols-4">
-          {[
-            [
-              "Start with costs",
-              "Use the profit calculator to estimate item cost, fulfillment cost, delivery cost, fees, and total resale profit.",
-            ],
-            [
-              "Set price",
-              "Use the pricing and break-even calculators to find listing prices that leave room for buyer negotiation.",
-            ],
-            [
-              "Review offers",
-              "Use the negotiation calculator to compare accepted prices, counteroffers, discount room, and minimum profitable offers.",
-            ],
-            [
-              "Compare fulfillment",
-              "Use the shipping profit calculator to compare local pickup, local delivery, and shipped-order profit.",
-            ],
-          ].map(([title, text]) => (
-            <div key={title} className="rounded-xl bg-gray-50 p-4">
-              <p className="font-bold text-gray-950">{title}</p>
-              <p className="mt-3 text-sm leading-6 text-gray-600">{text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8 rounded-2xl border border-amber-300 bg-amber-50 p-5">
-        <p className="text-sm leading-6 text-amber-900">
-          SellerToolSuite calculators provide planning estimates only. Actual
-          Facebook Marketplace fees, buyer negotiation, shipping costs, local
-          delivery costs, fuel costs, packaging costs, payment processing,
-          cancellations, returns, taxes, pickup reliability, and item-specific
-          marketplace rules may vary.
-        </p>
+        <section className="mt-8 rounded-xl border border-amber-300 bg-amber-50 p-5">
+          <p className="text-sm leading-6 text-amber-900">
+            SellerToolSuite calculators provide planning estimates only. Actual
+            Facebook Marketplace fees, shipping costs, local delivery costs,
+            buyer behavior, payment terms, refunds, item condition, taxes,
+            marketplace policies, and local selling risk may vary.
+          </p>
+        </section>
       </section>
     </main>
+  );
+}
+
+function ToolCard({
+  title,
+  href,
+  tag,
+  text,
+}: {
+  title: string;
+  href: string;
+  tag: string;
+  text: string;
+}) {
+  return (
+    <a
+      href={href}
+      className="rounded-xl border bg-white p-5 shadow-sm hover:border-blue-300 hover:bg-blue-50"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="font-bold">{title}</h3>
+        <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-bold text-blue-700">
+          {tag}
+        </span>
+      </div>
+      <p className="mt-3 text-sm leading-6 text-slate-600">{text}</p>
+      <p className="mt-4 text-sm font-bold text-blue-700">Open tool →</p>
+    </a>
+  );
+}
+
+function GuideCard({
+  title,
+  href,
+  text,
+}: {
+  title: string;
+  href: string;
+  text: string;
+}) {
+  return (
+    <a
+      href={href}
+      className="rounded-xl border bg-white p-4 shadow-sm hover:border-blue-300 hover:bg-blue-50"
+    >
+      <h3 className="font-bold">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+      <p className="mt-3 text-sm font-bold text-blue-700">Open guide →</p>
+    </a>
+  );
+}
+
+function MiniCard({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="rounded-lg bg-white p-4 shadow-sm">
+      <h3 className="font-bold">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+    </div>
+  );
+}
+
+function Check({ text }: { text: string }) {
+  return (
+    <div className="flex gap-3 text-sm leading-6 text-slate-700">
+      <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">
+        ✓
+      </span>
+      <p>{text}</p>
+    </div>
+  );
+}
+
+function XItem({ text }: { text: string }) {
+  return (
+    <div className="flex gap-3 text-sm leading-6 text-slate-700">
+      <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700">
+        ×
+      </span>
+      <p>{text}</p>
+    </div>
   );
 }
