@@ -9,27 +9,27 @@ export const metadata: Metadata = {
   title: {
     default: "SellerToolSuite | Free Tools for Online Sellers",
     template: "%s | SellerToolSuite",
-  }, 
-    description:
-  "Free calculators and planning tools for online sellers. Estimate marketplace fees, profit margins, product pricing, shipping impact, ROI, and more across Etsy, Shopify, Amazon, eBay, Mercari, Poshmark, and Facebook Marketplace.",
+  },
+
+  description:
+    "Free calculators and planning tools for online sellers. Estimate marketplace fees, profit margins, product pricing, shipping impact, ROI, and more across Etsy, Shopify, Amazon, eBay, Mercari, Poshmark, and Facebook Marketplace.",
 
   keywords: [
-  "online seller calculator",
-  "marketplace seller tools",
-  "ecommerce profit calculator",
-  "seller fee calculator",
-  "pricing calculator",
-  "profit margin calculator",
-  "marketplace calculator",
-  "online selling tools",
-],
+    "online seller calculator",
+    "marketplace seller tools",
+    "ecommerce profit calculator",
+    "seller fee calculator",
+    "pricing calculator",
+    "profit margin calculator",
+    "marketplace calculator",
+    "online selling tools",
+  ],
 
   authors: [{ name: "SellerToolSuite" }],
 
   openGraph: {
     title: "SellerToolSuite",
-    description:
-      "Free marketplace seller calculators and planning tools.",
+    description: "Free marketplace seller calculators and planning tools.",
     url: "https://www.sellertoolsuite.com",
     siteName: "SellerToolSuite",
     locale: "en_US",
@@ -39,13 +39,16 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "SellerToolSuite",
-    description:
-      "Free marketplace seller calculators and planning tools.",
+    description: "Free marketplace seller calculators and planning tools.",
   },
 
   robots: {
     index: true,
     follow: true,
+  },
+
+  other: {
+    "google-adsense-account": "ca-pub-1704349440219922",
   },
 };
 
